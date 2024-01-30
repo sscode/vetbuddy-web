@@ -10,6 +10,8 @@ export default function Recorder() {
     try {
       const response = await fetch('https://vetbuddy.onrender.com/generate-upload-url');
       const { uploadURL } = await response.json();
+
+      console.log('Uploading recording to:', uploadURL);
   
       await fetch(uploadURL, {
         method: 'PUT',
