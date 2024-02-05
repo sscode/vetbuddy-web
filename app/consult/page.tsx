@@ -107,10 +107,15 @@ const downloadPDF = () => {
 
   //get date in format DDMMYYYY
   const date = new Date();
-  const day = date.getDate();
+  let day = date.getDate();
+
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
-  const dateString = `${day}${month}${year}`;
+  let zero = '';
+  if (day < 10) {
+    zero = `0`;
+  }
+  const dateString = `${zero}${day}${month}${year}`;
 
   // Save the PDF
   doc.save(`vetbuddy-${dateString}.pdf`);
