@@ -29,13 +29,6 @@ export default function Consult() {
   const textForAPI = formatConsultTextForAPI(sectionText);
 
   useEffect(() => {
-    console.log('sectionText change');
-    if (sectionText) {
-      setConsultText(textForAPI);
-    }
-  }, [sectionText])
-
-  useEffect(() => {
     console.log('rawTranscript change');
     if (rawTranscript) {
       consultHandler(rawTranscript);
@@ -131,9 +124,6 @@ export default function Consult() {
       <pre className="text-black mt-4 whitespace-pre-wrap overflow-auto">
         {consultText}
       </pre>
-
-
-
       </div>
     </main>
   );
