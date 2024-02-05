@@ -1,22 +1,19 @@
-// Nav.js or Nav.jsx
 const Nav = () => {
     return (
-      <nav className=" text-black">
-        <div className="container mx-auto flex justify-between items-center">
-        <ul className="flex space-x-4">
+      <nav className="text-black">
+        <div className="container mx-auto grid grid-cols-3 items-center">
+          <ul className="flex space-x-4 justify-start">
             <li><a href="/" className="hover:text-slate-300">Home</a></li>
-            <li><a href="/" className="hover:text-slate-300"></a></li>
           </ul>
-          <div className="text-lg font-bold">VetBuddy</div>
-          <ul className="flex space-x-4">
-            <li><a href="/templates" className="hover:text-slate-300">Templates</a></li>
-            <li><a href="/consult" className="hover:text-slate-300">Consult</a></li>
-            {/* <li><a href="/services" className="hover:text-blue-200">Login</a></li> */}
+          <div className="text-lg font-bold text-center">VetBuddy</div>
+          <ul className="flex space-x-4 justify-end">
+            <li><a href="/templates" className="p-2 rounded hover:text-slate-300 hover:bg-slate-800">Templates</a></li>
+            <li><a href="/history" className="p-2 rounded hover:text-slate-300 hover:bg-slate-800">History</a></li>
+            <li><a href="/consult" className="p-2 rounded bg-green-300 hover:text-slate-300 hover:bg-slate-800">New Consult</a></li>
           </ul>
         </div>
       </nav>
     );
-  };
+};
   
-  export default Nav;
-  
+export default Nav;

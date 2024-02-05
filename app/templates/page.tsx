@@ -1,12 +1,9 @@
 'use client'
 
-import { useEffect, useState } from "react";
-import ClipLoader from "react-spinners/ClipLoader";
-import Link from "next/link";
+import { useState } from "react";
 import Nav from "../Components/Nav/Nav";
-import RecordSettings from "../Components/Recorder/RecordSettings";
-import Recorder from "../Components/Recorder/Recorder";
 import TemplateInput from "./TemplateInput";
+import TemplateList from "./TemplateList";
 
 export default function Templates() {
 
@@ -24,10 +21,10 @@ export default function Templates() {
     <main className="bg-white p-24">
         <Nav />
       <div className="mt-12">
-        {/* <Header /> */}
         <h1
         className="text-black text-3xl font-bold"
         >Templates</h1>
+        <TemplateList />
         {sections.map((index: any) => {
             return (
                 <div key={index}>
