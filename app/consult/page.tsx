@@ -8,7 +8,8 @@ import RecordSettings from "../Components/Recorder/RecordSettings";
 import Recorder from "../Components/Recorder/Recorder";
 import { useTemplateStore } from "../store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+import { faClipboard, faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import { jsPDF } from "jspdf";
 
 function formatConsultTextForAPI(sectionTextList: string[]) {
   // First, transform each string by adding the index + 1 and a period at the beginning
@@ -97,6 +98,24 @@ export default function Consult() {
     });
 };
 
+const downloadPDF = () => {
+  // Create a new jsPDF instance
+  const doc = new jsPDF();
+
+  // Add text to PDF
+  doc.text(consultText, 10, 10); // Adjust the position as needed
+
+  //get date in format DDMMYYYY
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const dateString = `${day}${month}${year}`;
+
+  // Save the PDF
+  doc.save(`vetbuddy-${dateString}.pdf`);
+}
+
 
 
   return (
@@ -132,8 +151,9 @@ export default function Consult() {
         )}
 
         {consultText &&
+        <div className="flex">
           <div
-            className="w-16 p-2 mt-4 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
+            className="w-16 p-2 mt-4 mr-2 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
             onClick={copyToClipboard} // Add the onClick event handler here
           >
             <FontAwesomeIcon 
@@ -141,6 +161,17 @@ export default function Consult() {
                 icon={faClipboard} 
             />
           </div>
+          <div
+            className="w-16 p-2 mt-4 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
+            onClick={downloadPDF} // Add the onClick event handler here
+          >
+            <FontAwesomeIcon 
+                className="text-black text-2xl"
+                icon={faFilePdf} 
+            />
+          </div>
+        
+        </div>
         }
 
       <pre className="text-black mt-4 whitespace-pre-wrap overflow-auto">
