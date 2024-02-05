@@ -9,7 +9,6 @@ type TemplateStore = {
 }
 
 export const useTemplateStore = create<TemplateStore>(
-    persist(
       (set) => ({
         sections: promptSections,
         addSection: (section) => set((state) => ({ sections: [...state.sections, section] })),
@@ -17,10 +16,6 @@ export const useTemplateStore = create<TemplateStore>(
           set((state) => ({
             sections: state.sections.map((section, i) => (i === index ? newSection : section)),
           })),
-      }),
-      {
-        name: 'template-store', // unique name of the store
-      }
-    )
+      })
   );
   
