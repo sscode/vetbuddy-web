@@ -1,21 +1,25 @@
+// Templates Page
 'use client'
 
-import { useState } from "react";
 import Nav from "../Components/Nav/Nav";
+import { useTemplateStore } from "../store";
 import TemplateInput from "./TemplateInput";
-import TemplateList from "./TemplateList";
 
 export default function Templates() {
-
-    const [sections, setSections] = useState(["hi", 
-    "hello",]);
-
+    const sections = useTemplateStore(state => state.sections);
+    const updateSection = useTemplateStore(state => state.updateSection);
+  
+    const handleSectionChange = (index: number, newText: string) => {
+      updateSection(index, newText);
+    };
+    
+    const addSection = useTemplateStore(state => state.addSection);
+    // Inside Templates component
     const sectionHandler = () => {
-        //random string
-        const randomString = Math.random().toString(36).substring(4);
+        // Ensure the new section starts with its index prefix
+        addSection(`New Section`);
+    };
 
-        setSections([...sections, randomString]);
-    }
 
   return (
     <main className="bg-white p-24">
@@ -24,14 +28,11 @@ export default function Templates() {
         <h1
         className="text-black text-3xl font-bold"
         >Templates</h1>
-        <TemplateList />
-        {sections.map((index: any) => {
-            return (
-                <div key={index}>
-                    <TemplateInput />
-                </div>
-            )
-        })}
+        {sections.map((text, index) => (
+          <div key={index}>
+            <TemplateInput index={index} text={text} onChange={handleSectionChange} />
+          </div>
+        ))}
         <div className="mt-12">
             <button
             onClick={sectionHandler}
@@ -39,9 +40,9 @@ export default function Templates() {
             >Add New Section</button>
         </div>
         <div className="mt-4">
-            <button
+            {/* <button
             className="text-black border border-black p-2 rounded-md hover:bg-black hover:text-white transition-all duration-300 ease-in-out"
-            >Save Template</button>
+            >Save Template</button> */}
         </div>
       </div>
     </main>
