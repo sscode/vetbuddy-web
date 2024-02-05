@@ -25,6 +25,13 @@ export default function Templates() {
         deleteSection(index);
     }
 
+    const restoreDefault = useTemplateStore(state => state.restoreDefault);
+    const restoreHandler = () => {
+        restoreDefault();
+    }
+
+
+
 
   return (
     <main className="bg-white p-24">
@@ -40,17 +47,22 @@ export default function Templates() {
             index={index} text={text} onChange={handleSectionChange} />
           </div>
         ))}
-        <div className="mt-12">
-            <button
-            onClick={sectionHandler}
-            className="text-black border border-black p-2 rounded-md hover:bg-black hover:text-white transition-all duration-300 ease-in-out"
-            >Add New Section</button>
+        <div className="mt-12 flex align-middle justify-between">
+            <div className="">
+                <button
+                onClick={sectionHandler}
+                className="text-black border border-black p-2 rounded-md hover:bg-black hover:text-white transition-all duration-300 ease-in-out"
+                >Add New Section</button>
+            </div>
+            <div className="">
+                <button
+                onClick={restoreHandler}
+                className="text-black border border-black p-2 rounded-md hover:bg-black hover:text-white transition-all duration-300 ease-in-out"
+                >Restore Default</button>
+            </div>
+
         </div>
-        <div className="mt-4">
-            {/* <button
-            className="text-black border border-black p-2 rounded-md hover:bg-black hover:text-white transition-all duration-300 ease-in-out"
-            >Save Template</button> */}
-        </div>
+
       </div>
     </main>
   );

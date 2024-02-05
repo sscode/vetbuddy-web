@@ -7,6 +7,7 @@ type TemplateStore = {
     addSection: (section: string) => void;
     updateSection: (index: number, newSection: string) => void;
     deleteSection: (index: number) => void;
+    restoreDefault: () => void;
 }
 
 export const useTemplateStore = create<TemplateStore>()(
@@ -20,6 +21,7 @@ export const useTemplateStore = create<TemplateStore>()(
             deleteSection: (index: number) => set((state: TemplateStore) => ({
                 sections: state.sections.filter((section: string, i: number) => i !== index),
             })),
+            restoreDefault: () => set({ sections: promptSections }),
         }),
         {
             name: 'template-store',
