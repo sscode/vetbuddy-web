@@ -12,7 +12,7 @@ type TemplateStore = {
 export const useTemplateStore = create<TemplateStore>()(
     persist(
         (set) => ({
-            sections: [],
+            sections: promptSections,
             addSection: (section: string) => set((state: TemplateStore) => ({ sections: [...state.sections, section] })),
             updateSection: (index: number, newSection: string) => set((state: TemplateStore) => ({
                 sections: state.sections.map((section: string, i: number) => i === index ? newSection : section),
