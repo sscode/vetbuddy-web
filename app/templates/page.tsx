@@ -20,6 +20,11 @@ export default function Templates() {
         addSection(`New Section`);
     };
 
+    const deleteSection = useTemplateStore(state => state.deleteSection);
+    const deleteHandler = (index: number) => {
+        deleteSection(index);
+    }
+
 
   return (
     <main className="bg-white p-24">
@@ -30,7 +35,9 @@ export default function Templates() {
         >Templates</h1>
         {sections.map((text, index) => (
           <div key={index}>
-            <TemplateInput index={index} text={text} onChange={handleSectionChange} />
+            <TemplateInput 
+            onDelete={deleteHandler}
+            index={index} text={text} onChange={handleSectionChange} />
           </div>
         ))}
         <div className="mt-12">

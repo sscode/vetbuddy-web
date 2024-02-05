@@ -18,6 +18,11 @@ function formatConsultTextForAPI(sectionTextList: string[]) {
   return formattedSections.join('\n');
 }
 
+function formatConsultTextRender(APIText: string) {
+  //add a newline after each section. each section ends with \n
+  return APIText.split('\n').join('\n\n');
+}
+
 
 export default function Consult() {
 
@@ -27,9 +32,9 @@ export default function Consult() {
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(false);
 
-  const sectionText = useTemplateStore(state => state.sections);
+  const templateStore = useTemplateStore();
 
-  const textForAPI = formatConsultTextForAPI(sectionText);
+  const textForAPI = formatConsultTextForAPI(templateStore.sections);
 
   useEffect(() => {
     console.log('rawTranscript change');
@@ -59,7 +64,7 @@ export default function Consult() {
     .then(res => res.json())
     .then(data => {
       console.log('data:', data.text);
-      setConsultText(data.text)
+      setConsultText(formatConsultTextRender(data.text));
       setIsLoading(false);
     })
     .catch(err => console.log(err));
@@ -103,7 +108,7 @@ const downloadPDF = () => {
   const doc = new jsPDF();
 
   // Add text to PDF
-  doc.text(consultText, 10, 10); // Adjust the position as needed
+  doc.text(consultText, 10, 30); // Adjust the position as needed
 
   //get date in format DDMMYYYY
   const date = new Date();
@@ -120,7 +125,6 @@ const downloadPDF = () => {
   // Save the PDF
   doc.save(`vetbuddy-${dateString}.pdf`);
 }
-
 
 
   return (
