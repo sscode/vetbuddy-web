@@ -1,4 +1,6 @@
-import { useState, useRef } from 'react';
+import { faMicrophone, faMicrophoneSlash, faSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState, useRef, useEffect } from 'react';
 import { ClipLoader } from 'react-spinners';
 
 type RecorderProps = {
@@ -10,10 +12,12 @@ type RecorderProps = {
 
   export default function Recorder({ setAWSURL, setRecording, recording }: RecorderProps) {
 
-    const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [audioURL, setAudioURL] = useState('');
+  const [audioDuration, setAudioDuration] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);  
   const audioChunksRef = useRef<Blob[]>([]);
+  const [dots, setDots] = useState('.');
 
   const uploadRecording = async (audioBlob: Blob) => {
 
@@ -21,10 +25,7 @@ type RecorderProps = {
 
     try {
       const response = await fetch('https://vetbuddy.onrender.com/generate-upload-url');
-    //   const response = await fetch('http://localhost:5050/generate-upload-url');
       const { uploadURL, key } = await response.json();
-
-      console.log('Uploading recording to:', uploadURL);
   
       await fetch(uploadURL, {
         method: 'PUT',
@@ -90,23 +91,64 @@ type RecorderProps = {
     mediaRecorderRef.current.stop();
     setRecording(false);
   };
+
+  const handleMetadataLoaded = (event: React.SyntheticEvent<HTMLAudioElement, Event>) => {
+    const duration = event.currentTarget.duration;
+    setAudioDuration(new Date(duration * 1000).toISOString().substr(14, 5));
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prevDots => {
+        // Determine the new state based on previous state
+        const newDots = prevDots.length < 3 ? prevDots + '.' : '.';
+        return newDots;
+      });
+    }, 500); // Adjust time as needed
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, []); 
   
   return (
-    <div className='bg-gray-400 mb-10 flex flex-col items-center justify-between p-24'>
+    <div className='mt-12 h-18'>
       {recording ? (
+        <>
         <button
-          className='bg-slate-600 p-2 rounded mb-2'
-          onClick={stopRecording}>Stop Recording</button>
+        className='bg-black rounded p-2 hover:bg-slate-300'
+        onClick={stopRecording}>
+        <FontAwesomeIcon 
+        className='pr-2'
+        icon={faMicrophoneSlash} />
+          Stop Recording</button>
+        <p
+        className='text-red-500 font-bold mt-2'
+        >Recording in progress {dots}</p>
+        </>
       ) : (
         isUploading ? 
-          <ClipLoader color='#ffffff' />
+          <ClipLoader color='#000' />
           : (
-            <>
+            <div
+            className='flex flex-row'
+            >
               <button 
-                className='bg-slate-600 p-2 rounded mb-2'
-                onClick={startRecording}>Start Recording</button>
-              {audioURL && <audio src={audioURL} controls />}
-            </>
+                className='bg-black rounded p-2 hover:bg-green-500'
+                onClick={startRecording}>
+                <FontAwesomeIcon 
+                className='pr-2'
+                icon={faMicrophone} />
+                  Start New Recording
+          
+                  </button>
+              {audioURL && 
+              <audio 
+              src={audioURL} 
+              controls 
+              className='ml-4'
+              // onLoadedMetadata={handleMetadataLoaded} // Capture audio metadata when loaded
+            />
+              }
+            </div>
           )
       )}
     </div>
