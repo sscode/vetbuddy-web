@@ -7,6 +7,8 @@ import Nav from "../Components/Nav/Nav";
 import RecordSettings from "../Components/Recorder/RecordSettings";
 import Recorder from "../Components/Recorder/Recorder";
 import { useTemplateStore } from "../store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 function formatConsultTextForAPI(sectionTextList: string[]) {
   // First, transform each string by adding the index + 1 and a period at the beginning
@@ -19,7 +21,7 @@ function formatConsultTextForAPI(sectionTextList: string[]) {
 export default function Consult() {
 
   const [rawTranscript, setRawTranscript] = useState<String>('');
-  const [consultText, setConsultText] = useState<String>('');
+  const [consultText, setConsultText] = useState<string>('');
   const [awsURL, setAWSURL] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(false);
@@ -87,6 +89,14 @@ export default function Consult() {
       });
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(consultText).then(() => {
+        // Optionally show a notification or change the icon to indicate success
+    }, (err) => {
+        console.error('Could not copy text: ', err);
+    });
+};
+
 
 
   return (
@@ -120,6 +130,18 @@ export default function Consult() {
             )}
           </button>
         )}
+
+        {consultText &&
+          <div
+            className="w-16 p-2 mt-4 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
+            onClick={copyToClipboard} // Add the onClick event handler here
+          >
+            <FontAwesomeIcon 
+                className="text-black text-2xl"
+                icon={faClipboard} 
+            />
+          </div>
+        }
 
       <pre className="text-black mt-4 whitespace-pre-wrap overflow-auto">
         {consultText}
