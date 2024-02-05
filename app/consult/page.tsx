@@ -6,6 +6,15 @@ import Link from "next/link";
 import Nav from "../Components/Nav/Nav";
 import RecordSettings from "../Components/Recorder/RecordSettings";
 import Recorder from "../Components/Recorder/Recorder";
+import { useTemplateStore } from "../store";
+
+function formatConsultTextForAPI(sectionTextList: string[]) {
+  // First, transform each string by adding the index + 1 and a period at the beginning
+  const formattedSections = sectionTextList.map((text, index) => `${index + 1}. ${text}`);
+  // Then, join all transformed strings together with a newline character
+  return formattedSections.join('\n');
+}
+
 
 export default function Consult() {
 
@@ -15,6 +24,16 @@ export default function Consult() {
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(false);
 
+  const sectionText = useTemplateStore(state => state.sections);
+
+  const textForAPI = formatConsultTextForAPI(sectionText);
+
+  useEffect(() => {
+    console.log('sectionText change');
+    if (sectionText) {
+      setConsultText(textForAPI);
+    }
+  }, [sectionText])
 
   useEffect(() => {
     console.log('rawTranscript change');
@@ -33,18 +52,17 @@ export default function Consult() {
   }, [recording])
 
   const consultHandler = (transcript: any) => {
-
-    console.log('consultHandler', transcript);
     
     fetch('https://vetbuddy.onrender.com/openai', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ transcript })
+      body: JSON.stringify({ transcript, textForAPI })
     })
     .then(res => res.json())
     .then(data => {
+      console.log('data:', data.text);
       setConsultText(data.text)
       setIsLoading(false);
     })
@@ -110,7 +128,7 @@ export default function Consult() {
           </button>
         )}
 
-      <pre className="mt-4 whitespace-pre-wrap overflow-auto">
+      <pre className="text-black mt-4 whitespace-pre-wrap overflow-auto">
         {consultText}
       </pre>
 
