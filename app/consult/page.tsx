@@ -1,15 +1,15 @@
 'use client'
 
+import { faClipboard, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
+
 import ClipLoader from "react-spinners/ClipLoader";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import Nav from "../Components/Nav/Nav";
 import RecordSettings from "../Components/Recorder/RecordSettings";
 import Recorder from "../Components/Recorder/Recorder";
-import { useTemplateStore } from "../store";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { jsPDF } from "jspdf";
+import { useTemplateStore } from "../store";
 
 function formatConsultTextForAPI(sectionTextList: string[]) {
   // First, transform each string by adding the index + 1 and a period at the beginning
@@ -129,7 +129,6 @@ const downloadPDF = () => {
 
   return (
     <main className="bg-white p-24">
-        <Nav />
       <div className="mt-12">
         {/* <Header /> */}
         <h1

@@ -1,9 +1,8 @@
 // Templates Page
 'use client'
 
-import Nav from "../Components/Nav/Nav";
-import { useTemplateStore } from "../store";
 import TemplateInput from "./TemplateInput";
+import { useTemplateStore } from "../store";
 
 export default function Templates() {
     const sections = useTemplateStore(state => state.sections);
@@ -35,7 +34,6 @@ export default function Templates() {
 
   return (
     <main className="bg-white p-24">
-        <Nav />
       <div className="mt-12">
         <h1
         className="text-black text-3xl font-bold"

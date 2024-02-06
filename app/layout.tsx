@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
+
 import Hydrate from "./Components/Hydrate";
+import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import Navbar from "./Components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-        <body className={inter.className}>
-      <Hydrate>
-          
-          {children}
-      </Hydrate>
-          
-          </body>
+      <body className={inter.className}>
+        <Navbar user />
+        <Hydrate>{children}</Hydrate>
+      </body>
     </html>
   );
 }

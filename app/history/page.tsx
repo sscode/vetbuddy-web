@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from "react";
-import Nav from "../Components/Nav/Nav";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 export default function History() {
     const [sectionText] = useState("Consult: 1. Patient Information: - Name: Brian - Species: Fish 2. Reason for Visit: - Closed eyes for three days");
@@ -18,7 +17,6 @@ export default function History() {
 
     return (
         <main className="bg-white p-24">
-            <Nav />
             <div className="mt-12">
                 <h1 className="text-black text-3xl font-bold">History</h1>
                 <div>
