@@ -23,12 +23,12 @@ import React from "react";
 import { cn } from "@/app/Lib/utils";
 
 type Props = {
-  user: boolean | object;
+  user?: boolean | object;
 };
 
 export default function Navbar({ user }: Props) {
   return (
-    <NavigationMenu className="w-full mx-auto max-w-none my-2">
+    <NavigationMenu className="w-full mx-auto max-w-none py-2">
       <NavigationMenuList className="w-[90vw] justify-between">
         <div className="flex gap-1 max-w-[400px] flex-grow justify-start items-center">
           {landingNavItems(!!user).map((navItem) => (
@@ -47,7 +47,7 @@ export default function Navbar({ user }: Props) {
           ))}
         </div>
 
-        <div className="text-lg font-bold text-center">VetBuddy</div>
+        <div className="text-lg font-bold text-center">VetBuddy.AI</div>
 
         <div className="flex gap-1 max-w-[400px] flex-grow justify-end items-center">
           {user ? (
@@ -100,7 +100,3 @@ export default function Navbar({ user }: Props) {
     </NavigationMenu>
   );
 }
-
-Navbar.defaultProps = {
-  user: "AUTHENTICATED",
-};
