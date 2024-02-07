@@ -1,7 +1,10 @@
 // Templates Page
 'use client'
 
+import { H1, H2 } from "../Components/Typography";
+
 import TemplateInput from "./TemplateInput";
+import TemplateTable from "./TemplateTable";
 import { useTemplateStore } from "../store";
 
 export default function Templates() {
@@ -33,7 +36,9 @@ export default function Templates() {
 
 
   return (
-    <main className="bg-white p-24">
+    <>
+      <H2 className="my-4">Consult Templates</H2>
+      <TemplateTable />
       <div className="mt-12">
         <h1
         className="text-black text-3xl font-bold"
@@ -62,6 +67,6 @@ export default function Templates() {
         </div>
 
       </div>
-    </main>
+    </>
   );
 }

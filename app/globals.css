@@ -88,6 +88,21 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+
+.scrollable::-webkit-scrollbar {
+  width: 3px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: #a5a5a5;
+  background-clip: content-box;
+  /* border-left: 16px solid transparent; */
+}
+
 /*
 body {
   color: rgb(var(--foreground-rgb));
