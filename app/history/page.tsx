@@ -1,19 +1,14 @@
-"use client";
-
-import { Card, CardContent } from "../Components/ui/card";
-import { H2, H3, P } from "../Components/Typography";
+import { H2, P } from "../Components/Typography";
 
 import { Button } from "../Components/ui/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Card } from "../Components/ui/card";
 import { MOCK_HISTORY } from "../Constants/mockData";
 import dayjs from "dayjs";
-import { faClipboard } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
 
 type Record = {
   date: Date;
   name: string;
-  animal?: string,
+  animal?: string;
   audio: unknown;
   consult: unknown;
 };
@@ -24,20 +19,20 @@ type GroupedRecord = {
 };
 
 export default function History() {
-  const [sectionText] = useState(
-    "Consult: 1. Patient Information: - Name: Brian - Species: Fish 2. Reason for Visit: - Closed eyes for three days"
-  );
+  // const [sectionText] = useState(
+  //   "Consult: 1. Patient Information: - Name: Brian - Species: Fish 2. Reason for Visit: - Closed eyes for three days"
+  // );
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(sectionText).then(
-      () => {
-        // Optionally show a notification or change the icon to indicate success
-      },
-      (err) => {
-        console.error("Could not copy text: ", err);
-      }
-    );
-  };
+  // const copyToClipboard = () => {
+  //   navigator.clipboard.writeText(sectionText).then(
+  //     () => {
+  //       // Optionally show a notification or change the icon to indicate success
+  //     },
+  //     (err) => {
+  //       console.error("Could not copy text: ", err);
+  //     }
+  //   );
+  // };
 
   const groupRecordsByDate = (unsortedRecords: Record[]): GroupedRecord[] => {
     const records: Record[] = unsortedRecords.sort((a, b) => {
@@ -69,7 +64,7 @@ export default function History() {
   };
 
   return (
-    <main className="bg-white py-12 w-[90vw] max-w-5xl mx-auto">
+    <>
       <H2 className="mb-12">Consult History</H2>
       {groupRecordsByDate(MOCK_HISTORY)?.length ? (
         <div className="flex flex-col gap-10 my-4">
@@ -83,16 +78,27 @@ export default function History() {
                     className="bg-slate-50 p-4 flex justify-between items-center"
                   >
                     <div>
-                      <P className="text-sm font-medium">{record.name}{record.animal && " - "+record.animal}</P>
+                      <P className="text-sm font-medium">
+                        {record.name}
+                        {record.animal && " - " + record.animal}
+                      </P>
                       <P className="text-sm text-neutral-500 font-medium">
                         {dayjs(record.date).format("h:mma")}
                       </P>
                     </div>
                     <div className="flex flex-row gap-2">
-                      <Button size="sm" variant="ghost" className="text-neutral-500">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-neutral-500"
+                      >
                         Audio
                       </Button>
-                      <Button size="sm" variant="ghost" className="text-neutral-500">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-neutral-500"
+                      >
                         Consult
                       </Button>
                     </div>
@@ -104,10 +110,10 @@ export default function History() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-8 gap-4">
-          <P className="font-medium text-neutral-600">No Records Found</P>
+          <P className="font-medium text-neutral-500">No Records Found</P>
           <Button variant="outline">New Consult</Button>
         </div>
       )}
-    </main>
+    </>
   );
 }

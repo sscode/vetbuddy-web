@@ -20,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar user />
         <Hydrate>
-          <main className="bg-white py-12 w-[90vw] max-w-5xl mx-auto">{children}</main>
+          <Navbar user />
+          <main className="bg-white py-12 w-[90vw] max-w-5xl mx-auto">
+            {children}
+          </main>
         </Hydrate>
       </body>
     </html>

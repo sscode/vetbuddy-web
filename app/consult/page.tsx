@@ -128,7 +128,7 @@ const downloadPDF = () => {
 
 
   return (
-    <main className="bg-white p-24">
+    <>
       <div className="mt-12">
         {/* <Header /> */}
         <h1
@@ -186,6 +186,6 @@ const downloadPDF = () => {
         {consultText}
       </pre>
       </div>
-    </main>
+    </>
   );
 }

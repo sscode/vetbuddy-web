@@ -5,6 +5,7 @@ import * as React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   ColumnDef,
+  SortDirection,
   SortingState,
   VisibilityState,
   flexRender,
@@ -61,22 +62,16 @@ export default function TemplateTable() {
     },
     {
       accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="link"
-            className="px-0 text-slate-700"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Name
-            {column.getIsSorted() === "asc" ? (
-              <ChevronDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ChevronUp className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="link"
+          className="px-0 text-slate-700"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <SortIcon sorted={column.getIsSorted()} />
+        </Button>
+      ),
       cell: ({ row }) => (
         <P className="text-slate-500 font-medium w-fit">
           {row.getValue("name")}
@@ -92,11 +87,7 @@ export default function TemplateTable() {
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Modified
-          {column.getIsSorted() === "asc" ? (
-            <ChevronDown className="ml-2 h-4 w-4" />
-          ) : (
-            <ChevronUp className="ml-2 h-4 w-4" />
-          )}
+          <SortIcon sorted={column.getIsSorted()} />
         </Button>
       ),
       cell: ({ row }) => {
@@ -190,4 +181,11 @@ export default function TemplateTable() {
       </Table>
     </div>
   );
+}
+
+function SortIcon({ sorted }: { sorted: false | SortDirection }) {
+  if (sorted === "asc") {
+    return <ChevronDown className="ml-2 h-4 w-4" />;
+  }
+  return <ChevronUp className="ml-2 h-4 w-4" />;
 }
