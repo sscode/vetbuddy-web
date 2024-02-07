@@ -31,8 +31,8 @@ export default function Navbar({ user }: Props) {
     <NavigationMenu className="w-full mx-auto max-w-none py-2">
       <NavigationMenuList className="w-[90vw] justify-between">
         <div className="flex gap-1 max-w-[400px] flex-grow justify-start items-center">
-          {landingNavItems(!!user).map((navItem) => (
-            <NavigationMenuItem>
+          {landingNavItems(!!user).map((navItem, index) => (
+            <NavigationMenuItem key={index}>
               <Link href={navItem.link} legacyBehavior passHref>
                 <NavigationMenuLink
                   className={cn(
@@ -52,8 +52,8 @@ export default function Navbar({ user }: Props) {
         <div className="flex gap-1 max-w-[400px] flex-grow justify-end items-center">
           {user ? (
             <>
-              {authenticatedNavItems.map((navItem) => (
-                <NavigationMenuItem>
+              {authenticatedNavItems.map((navItem, index) => (
+                <NavigationMenuItem key={index}>
                   <Link href={navItem.link} legacyBehavior passHref>
                     <NavigationMenuLink
                       className={cn(
