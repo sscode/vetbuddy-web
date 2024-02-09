@@ -40,24 +40,32 @@ export const useTemplateStore = create<TemplateStore>()(
 );
 
 export type Template = {
-  id: string;
   name: string;
   modified: Date;
+  reason?: string;
+  history?: string;
+  physicalExamination?: string;
+  complaints?: string;
 };
 
 type TemplatesStore = {
   templates: Array<Template>;
+  addTemplate: (newTemplate: Template) => Template;
   deleteTemplate: (index: number) => void;
 };
 export const useTemplatesStore = create<TemplatesStore>()(
   persist(
     (set) => ({
       templates: MOCK_TEMPLATES,
+      addTemplate: (newTemplate) => {
+        set((state) => ({
+          templates: [...state.templates, newTemplate],
+        }));
+        return newTemplate
+      },
       deleteTemplate: (index: number) =>
         set((state) => ({
-          templates: state.templates.filter(
-            (_, i: number) => i !== index
-          ),
+          templates: state.templates.filter((_, i: number) => i !== index),
         })),
     }),
     {

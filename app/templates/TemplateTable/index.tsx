@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { MOCK_TEMPLATES, Template } from "@/app/Constants/mockData";
+import { H2, P } from "../../Components/Typography";
 import {
   Table,
   TableBody,
@@ -22,13 +22,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/Components/ui/table";
+import { Template, useTemplatesStore } from "@/app/store";
 
 import { Button } from "@/app/Components/ui/button";
 import { Checkbox } from "@/app/Components/ui/checkbox";
 import { DeleteFilled } from "@/app/Components/Icons";
-import { P } from "../../Components/Typography";
 import dayjs from "dayjs";
-import { useTemplatesStore } from "@/app/store";
 
 export default function TemplateTable() {
   const { templates, deleteTemplate } = useTemplatesStore();
@@ -65,7 +64,7 @@ export default function TemplateTable() {
       header: ({ column }) => (
         <Button
           variant="link"
-          className="px-0 text-slate-700"
+          className="px-0 text-slate-600"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Name
@@ -83,7 +82,7 @@ export default function TemplateTable() {
       header: ({ column }) => (
         <Button
           variant="link"
-          className="px-0 text-slate-700"
+          className="px-0 text-slate-600"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Modified
@@ -112,7 +111,7 @@ export default function TemplateTable() {
                 deleteTemplate(row.index);
               }}
             >
-              <DeleteFilled className="text-lg text-slate-500 dark:text-slate-400" />
+              <DeleteFilled className="text-lg text-slate-700 dark:text-slate-400" />
             </Button>
           </div>
         );
@@ -136,49 +135,59 @@ export default function TemplateTable() {
   });
 
   return (
-    <div className="rounded-md border max-h-96 overflow-y-auto scrollable">
-      <Table>
-        <TableHeader className="sticky top-0 bg-background border-slate-600">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+    <div className="space-y-4">
+      <H2 className="my-4">Consult Templates</H2>
+      <div className="h-96 overflow-y-auto scrollable">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background border-slate-600">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="border-b-0"
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-2 px-4">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

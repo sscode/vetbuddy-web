@@ -90,7 +90,7 @@ export default function Navbar({ user }: Props) {
                   </Button>
                 </Link>
                 <Link href="#" legacyBehavior passHref>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-500">
+                  <Button size="sm" variant="primary">
                     Sign Up
                   </Button>
                 </Link>

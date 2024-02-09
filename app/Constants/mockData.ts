@@ -1,3 +1,5 @@
+import { Template } from "../store";
+
 type Animal = "Dog" | "Cat" | "Monkey" | "Fish" | "Rabbit" | "Lizard" | "Chameleon" | "Turtle"
 
 export const MOCK_HISTORY: {
@@ -37,26 +39,16 @@ export const MOCK_HISTORY: {
   },
 ];
 
-
-export type Template = {
-  id: string;
-  name: string;
-  modified: Date;
-};
-
 export const MOCK_TEMPLATES: Template[] = [
   {
-    id: "m5gr84i9",
     name: "Consult 1",
     modified: new Date("1-2-2024"),
   },
   {
-    id: "3u1reuv4",
     name: "Example",
     modified: new Date("1-3-2024"),
   },
   {
-    id: "derv1ws0",
     name: "Example 2",
     modified: new Date("1-4-2024"),
   },

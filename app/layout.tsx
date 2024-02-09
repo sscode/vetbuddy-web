@@ -4,6 +4,7 @@ import Hydrate from "./Components/Hydrate";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "./Components/Navbar";
+import { Toaster } from "@/app/Components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,10 +23,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <Hydrate>
           <Navbar user />
-          <main className="bg-white py-12 w-[90vw] max-w-5xl mx-auto">
+          {/* <main className="bg-white py-12 w-[calc(100vw-40px)] max-w-5xl mx-auto"> */}
+          <main className="bg-white py-12 px-8">
             {children}
           </main>
         </Hydrate>
+        <Toaster />
       </body>
     </html>
   );

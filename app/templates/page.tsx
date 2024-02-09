@@ -1,36 +1,37 @@
 // Templates Page
 "use client";
 
-import { H1, H2 } from "../Components/Typography";
-
-import TemplateInput from "./TemplateInput";
+import NewTemplate from "./NewTemplate";
 import TemplateTable from "./TemplateTable";
-import { useTemplateStore } from "../store";
+
+// import { useTemplateStore } from "../store";
+// import TemplateInput from "./TemplateInput";
 
 export default function Templates() {
-  const { sections, addSection, deleteSection, restoreDefault, updateSection } =
-    useTemplateStore();
+  // const { sections, addSection, deleteSection, restoreDefault, updateSection } =
+  //   useTemplateStore();
 
-  const handleSectionChange = (index: number, newText: string) => {
-    updateSection(index, newText);
-  };
-  // Inside Templates component
-  const sectionHandler = () => {
-    // Ensure the new section starts with its index prefix
-    addSection(`New Section`);
-  };
-  const deleteHandler = (index: number) => {
-    deleteSection(index);
-  };
-  const restoreHandler = () => {
-    restoreDefault();
-  };
+  // const handleSectionChange = (index: number, newText: string) => {
+  //   updateSection(index, newText);
+  // };
+  // // Inside Templates component
+  // const sectionHandler = () => {
+  //   // Ensure the new section starts with its index prefix
+  //   addSection(`New Section`);
+  // };
+  // const deleteHandler = (index: number) => {
+  //   deleteSection(index);
+  // };
+  // const restoreHandler = () => {
+  //   restoreDefault();
+  // };
 
   return (
-    <>
-      <H2 className="my-4">Consult Templates</H2>
+    <div className="space-y-12">
       <TemplateTable />
-      <div className="mt-12">
+      <NewTemplate />
+
+      {/* <div className="mt-12">
         <h1 className="text-black text-3xl font-bold">Templates</h1>
         {sections.map((text, index) => (
           <div key={index}>
@@ -60,7 +61,8 @@ export default function Templates() {
             </button>
           </div>
         </div>
-      </div>
-    </>
+      </div> */}
+
+    </div>
   );
 }
