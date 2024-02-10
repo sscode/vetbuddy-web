@@ -30,7 +30,7 @@ export default function Navbar({ user }: Props) {
   return (
     <header className="w-full">
       <NavigationMenu className="w-full mx-auto max-w-none py-2">
-        <NavigationMenuList className="w-[90vw] justify-between">
+        <NavigationMenuList className="w-[calc(100vw-2vw)] justify-between">
           <div className="flex gap-1 max-w-[400px] flex-grow justify-start items-center">
             {landingNavItems(!!user).map((navItem, index) => (
               <NavigationMenuItem key={index}>
