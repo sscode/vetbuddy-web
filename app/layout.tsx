@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "./Components/Navbar";
 import { Toaster } from "@/app/Components/ui/toaster";
-import Footer from "./homepage/footer";
+import Footer from "./homepage/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 

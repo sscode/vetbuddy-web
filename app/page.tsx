@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Button } from "./Components/ui/button";
 import Link from "next/link";
-import Footer from "./homepage/footer";
 
 export default function Home() {
   return (
