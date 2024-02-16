@@ -6,6 +6,7 @@ function TemplateList() {
         <p
         className='text-black text-1xl font-bold mt-12'
         >Template List</p>
+        
     </div>
   )
 }
