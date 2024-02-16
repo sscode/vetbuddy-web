@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "./Components/Navbar";
 import { Toaster } from "@/app/Components/ui/toaster";
+import Footer from "./homepage/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           <main className="bg-white py-12 px-8">
             {children}
           </main>
+          <Footer />
         </Hydrate>
         <Toaster />
       </body>
