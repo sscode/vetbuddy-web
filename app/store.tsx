@@ -39,37 +39,31 @@ export const useTemplateStore = create<TemplateStore>()(
   )
 );
 
-export type Template = {
+type Template = {
   name: string;
-  modified: Date;
-  reason?: string;
-  history?: string;
-  physicalExamination?: string;
-  complaints?: string;
+  modified: string;
+  sections: string[];
 };
 
-type TemplatesStore = {
+type TemplateListStore = {
   templates: Array<Template>;
-  addTemplate: (newTemplate: Template) => Template;
+  addTemplate: (newTemplate: Template) => void;
   deleteTemplate: (index: number) => void;
 };
-export const useTemplatesStore = create<TemplatesStore>()(
+
+export const useTemplatesListStore = create<TemplateListStore>()(
   persist(
     (set) => ({
       templates: MOCK_TEMPLATES,
-      addTemplate: (newTemplate) => {
-        set((state) => ({
-          templates: [...state.templates, newTemplate],
-        }));
-        return newTemplate
-      },
-      deleteTemplate: (index: number) =>
-        set((state) => ({
-          templates: state.templates.filter((_, i: number) => i !== index),
-        })),
+      addTemplate: (newTemplate) => set((state) => ({
+        templates: [...state.templates, newTemplate],
+      })),
+      deleteTemplate: (index) => set((state) => ({
+        templates: state.templates.filter((_, i) => i !== index),
+      })),
     }),
     {
-      name: "templates-store",
+      name: "templates-list-store",
     }
   )
 );

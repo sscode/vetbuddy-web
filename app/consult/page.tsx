@@ -7,7 +7,7 @@ import {
   faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { useTemplateStore, useTemplatesStore } from "../store";
+import { useTemplateStore, useTemplatesListStore } from "../store";
 
 import { Button } from "../Components/ui/button";
 import { Card } from "../Components/ui/card";
@@ -33,7 +33,7 @@ function formatConsultTextRender(APIText: string) {
 }
 
 export default function Consult() {
-  const { templates } = useTemplatesStore();
+  const { templates } = useTemplatesListStore();
 
   const [rawTranscript, setRawTranscript] = useState<String>("");
   const [consultText, setConsultText] = useState<string>("");
@@ -41,17 +41,26 @@ export default function Consult() {
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(false);
   const [selected, setSelected] = useState<number>(0);
+  const [activeTemplate, setActiveTemplate] = useState(templates[selected]);
 
-  const templateStore = useTemplateStore();
+  // const templateStore = useTemplateStore();
+  // const textForAPI = formatConsultTextForAPI(templates[selected]);
+  console.log("textForAPI", templates[selected]);
 
-  const textForAPI = formatConsultTextForAPI(templateStore.sections);
-
+  // const textForAPI = formatConsultTextForAPI(templateStore.sections);
+  
   useEffect(() => {
     console.log("rawTranscript change");
     if (rawTranscript) {
       consultHandler(rawTranscript);
     }
   }, [rawTranscript]);
+  
+  //update active template
+  useEffect(() => {
+    console.log("selected change", templates[selected]);
+    setActiveTemplate(templates[selected]);
+  }, [selected]);
 
   //delete consult on new recording
   useEffect(() => {
@@ -164,7 +173,15 @@ export default function Consult() {
           setRecording={setRecording}
           setAWSURL={setAWSURL}
         />
-
+        {/* Displaying activeTemplate properties */}
+        <div className="mt-8">
+          <Card className="bg-slate-50 p-4 space-y-4">
+          {Object.entries(activeTemplate).filter(([key]) => key !== 'modified' && key !== 'name').map(([key, value], index) => (              <div key={index} className="flex flex-col">
+                <P>{value}</P>
+              </div>
+            ))}
+          </Card>
+        </div>
         {awsURL && !consultText && (
           <button
             onClick={handleTranscription}

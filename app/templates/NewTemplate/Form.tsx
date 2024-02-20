@@ -1,161 +1,79 @@
-"use client";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/app/Components/ui/form";
-
+import React from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/app/Components/ui/button";
-import { DeleteFilled } from "@/app/Components/Icons";
 import { Input } from "@/app/Components/ui/input";
-import { P } from "@/app/Components/Typography";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useTemplatesStore } from "@/app/store";
+import { z } from 'zod';
 import { useToast } from "@/app/Components/ui/use-toast";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-type Props = {};
+import { useTemplatesListStore } from '@/app/store';
 
 const formSchema = z.object({
-  details: z
-    .string({ required_error: "Please enter Details." })
-    .min(1, { message: "Please enter Details." })
-    .max(150),
-  reason: z
-    .string({ required_error: "Please enter a Reason." })
-    .min(1, { message: "Please enter a Reason." })
-    .max(150),
-  history: z
-    .string({ required_error: "Please enter History." })
-    .min(1, { message: "Please enter History." })
-    .max(150),
-  physicalExamination: z
-    .string({
-      required_error: "Please enter information about Physical Examination.",
-    })
-    .min(1, { message: "Please enter information about Physical Examination." })
-    .max(150),
-  complaints: z
-    .string({ required_error: "Please enter any Complaints." })
-    .min(1, { message: "Please enter any Complaints." })
-    .max(150),
+  name: z.string().min(1, "Please enter a Template Name."),
+  sections: z.array(z.string().min(1, "Please enter a section.")), // Assuming sections are required
 });
 
-export default function NewTemplateForm({}: Props) {
-  const { toast } = useToast();
-  const { addTemplate } = useTemplatesStore();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+export default function NewTemplateForm() {
+  const { addTemplate } = useTemplatesListStore();
+  const { toast } = useToast(); // Destructuring to get toast function
+
+  const { register, control, handleSubmit, reset } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      complaints:"",
-      details:"",
-      history:"",
-      physicalExamination:"",
-      reason:"",
+      name: '',
+      sections: [''], // Start with one section
     },
-    reValidateMode: "onBlur",
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { complaints, details, history, physicalExamination, reason } =
-      values;
-    addTemplate({
-      modified: new Date(),
-      name: details,
-      history,
-      physicalExamination,
-      reason,
-      complaints,
-    });
-    toast({
-      title: "Successfully added new Template",
-    });
-    form.reset();
-  }
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'sections',
+  });
 
-  const fields: {
-    name:
-      | "details"
-      | "reason"
-      | "history"
-      | "physicalExamination"
-      | "complaints";
-    placeholder: string;
-    onDelete?: () => void;
-  }[] = [
-    {
-      name: "details",
-      placeholder: "Details",
-    },
-    {
-      name: "reason",
-      placeholder: "Reason for Visit",
-    },
-    {
-      name: "history",
-      placeholder: "History",
-    },
-    {
-      name: "physicalExamination",
-      placeholder: "Physical Examination",
-    },
-    {
-      name: "complaints",
-      placeholder: "Complaints",
-      onDelete: () => {
-        form.resetField("complaints");
-      },
-    },
-  ];
+  const onSubmit = (values: any) => { // Remove async if not doing async operations or await inside
+    const { name, sections } = values;
+
+    console.log({ name, sections });
+
+    addTemplate({
+      name,
+      modified: new Date().toISOString(),
+      sections,
+    });
+
+    toast({ title: "Successfully added new Template" });
+    reset(); // Resets the form to initial values
+  };
+
+    // Function to handle toggle change
+    const handleToggleChange = (index, isChecked) => {
+      // Here you can handle the change, e.g., updating a state or directly manipulating form values
+      // Example: setValue(`toggles.${index}`, isChecked);
+      console.log(`Toggle ${index}: ${isChecked}`);
+    };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="space-y-2">
-          <P className="text-sm text-slate-500 dark:text-slate-400">
-            Add section to your template
-          </P>
-          {fields.map((item) => (
-            <div className="flex flex-row gap-2">
-              <FormField
-                control={form.control}
-                name={item.name}
-                render={({ field }) => (
-                  <FormItem className="flex-grow max-w-[900px]">
-                    <FormControl>
-                      <Input
-                        className="placeholder:text-slate-500 font-medium"
-                        placeholder={item.placeholder}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {item.onDelete && (
-                <Button type="button" onClick={item.onDelete} variant="ghost">
-                  <DeleteFilled className="text-lg text-slate-700 dark:text-slate-400" />
-                </Button>
-              )}
-            </div>
-          ))}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <Input {...register('name')} placeholder="Template Name" />
+      </div>
+
+      {fields.map((field, index) => (
+        <div key={field.id} className="flex items-center space-x-2">
+          <Input {...register(`sections.${index}`)} placeholder={`Section ${index + 1}`} />
+          <input
+            type="checkbox"
+            onChange={(e) => handleToggleChange(index, e.target.checked)}
+            // Optional: Register the checkbox if you want to include its value in the form submission
+            {...register(`toggles.${index}`)}
+          />
+          <Button type="button" onClick={() => remove(index)}>Remove</Button>
         </div>
-        <Button
-          type="submit"
-          variant="primary"
-          size="sm"
-          className="rounded-lg w-[240px]"
-        >
-          Save Template
-        </Button>
-      </form>
-    </Form>
+      ))}
+
+      <Button className="mr-2" type="button" onClick={() => append('')}>Add Section</Button>
+      <Button type="submit">Save Template</Button>
+    </form>
   );
 }
+

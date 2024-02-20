@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/Components/ui/table";
-import { Template, useTemplatesStore } from "@/app/store";
+import { Template, useTemplatesListStore } from "@/app/store";
 
 import { Button } from "@/app/Components/ui/button";
 import { Checkbox } from "@/app/Components/ui/checkbox";
@@ -30,7 +30,7 @@ import { DeleteFilled } from "@/app/Components/Icons";
 import dayjs from "dayjs";
 
 export default function TemplateTable() {
-  const { templates, deleteTemplate } = useTemplatesStore();
+  const { templates, deleteTemplate } = useTemplatesListStore();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
