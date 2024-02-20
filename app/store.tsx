@@ -39,10 +39,15 @@ export const useTemplateStore = create<TemplateStore>()(
   )
 );
 
+type Section = {
+  name: string;
+  isChecked: boolean
+}
+
 type Template = {
   name: string;
   modified: string;
-  sections: string[];
+  sections: Section[];
 };
 
 type TemplateListStore = {
