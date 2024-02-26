@@ -72,8 +72,10 @@ export default function Consult() {
   }, [recording]);
 
   const consultHandler = (transcript: any) => {
-    console.log("textForAPI", templates[selected].sections);
+    // console.log("textForAPI", templates[selected].sections);
+    // return;
     const textForAPI = formatConsultTextForAPI(templates[selected].sections);
+    console.log("textForAPI", textForAPI);
 
 
     fetch("https://vetbuddy.onrender.com/openai", {
