@@ -44,7 +44,7 @@ type Section = {
   isChecked: boolean
 }
 
-type Template = {
+export type Template = {
   name: string;
   modified: string;
   sections: Section[];
