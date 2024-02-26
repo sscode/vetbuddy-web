@@ -18,14 +18,17 @@ import RecordSettings from "../Components/Recorder/RecordSettings";
 import Recorder from "../Components/Recorder/Recorder";
 import { jsPDF } from "jspdf";
 
-function formatConsultTextForAPI(sectionTextList: string[]) {
-  // First, transform each string by adding the index + 1 and a period at the beginning
-  const formattedSections = sectionTextList.map(
-    (text, index) => `${index + 1}. ${text}`
-  );
-  // Then, join all transformed strings together with a newline character
+function formatConsultTextForAPI(sections: Array<{name: string, isChecked: boolean}>) {
+  // Transform each section with its index and name. Prepend special instructions if isChecked is true.
+  const formattedSections = sections.map((section, index) => {
+    const prefix = section.isChecked ? "**SPECIAL INSTRUCTIONS**\n" : "";
+    return `${prefix}${index + 1}. ${section.name}`;
+  });
+
+  // Join all transformed strings together with a newline character
   return formattedSections.join("\n");
 }
+
 
 function formatConsultTextRender(APIText: string) {
   //add a newline after each section. each section ends with \n
@@ -44,9 +47,6 @@ export default function Consult() {
   const [activeTemplate, setActiveTemplate] = useState(templates[selected]);
 
   // const templateStore = useTemplateStore();
-  // const textForAPI = formatConsultTextForAPI(templates[selected]);
-  console.log("textForAPI", templates[selected]);
-
   // const textForAPI = formatConsultTextForAPI(templateStore.sections);
   
   useEffect(() => {
@@ -72,6 +72,10 @@ export default function Consult() {
   }, [recording]);
 
   const consultHandler = (transcript: any) => {
+    console.log("textForAPI", templates[selected].sections);
+    const textForAPI = formatConsultTextForAPI(templates[selected].sections);
+
+
     fetch("https://vetbuddy.onrender.com/openai", {
       method: "POST",
       headers: {
@@ -175,12 +179,14 @@ export default function Consult() {
         />
         {/* Displaying activeTemplate properties */}
         <div className="mt-8">
-          <Card className="bg-slate-50 p-4 space-y-4">
-          {Object.entries(activeTemplate).filter(([key]) => key !== 'modified' && key !== 'name').map(([key, value], index) => (              <div key={index} className="flex flex-col">
-                <P>{value}</P>
-              </div>
-            ))}
-          </Card>
+        {/* <Card className="bg-slate-50 p-4 space-y-4">
+        {(activeTemplate.sections || []).map((section, index) => (
+          <div key={index} className="flex flex-col">
+            <P className="font-semibold">{section.name}</P>
+            <P>{section.isChecked ? 'Checked' : 'Not Checked'}</P>
+          </div>
+        ))}
+        </Card> */}
         </div>
         {awsURL && !consultText && (
           <button
