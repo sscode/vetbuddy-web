@@ -1,24 +1,26 @@
 "use client";
 
-import { H2, P } from "../Components/Typography";
+import { H2, P } from "@/app/Components/Typography";
 import {
   faCheckSquare,
   faClipboard,
   faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { useTemplateStore, useTemplatesListStore } from "../store";
+import { useTemplateStore, useTemplatesListStore } from "@/app/store";
 
-import { Button } from "../Components/ui/button";
-import { Card } from "../Components/ui/card";
+import { Button } from "@/app/Components/ui/button";
+import { Card } from "@/app/Components/ui/card";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import RecordSettings from "../Components/Recorder/RecordSettings";
-import Recorder from "../Components/Recorder/Recorder";
+import RecordSettings from "@/app/Components/Recorder/RecordSettings";
+import Recorder from "@/app/Components/Recorder/Recorder";
 import { jsPDF } from "jspdf";
 
-function formatConsultTextForAPI(sections: Array<{name: string, isChecked: boolean}>) {
+function formatConsultTextForAPI(
+  sections: Array<{ name: string; isChecked: boolean }>
+) {
   // Transform each section with its index and name. Prepend special instructions if isChecked is true.
   const formattedSections = sections.map((section, index) => {
     const prefix = section.isChecked ? "**SPECIAL INSTRUCTIONS**\n" : "";
@@ -28,7 +30,6 @@ function formatConsultTextForAPI(sections: Array<{name: string, isChecked: boole
   // Join all transformed strings together with a newline character
   return formattedSections.join("\n");
 }
-
 
 function formatConsultTextRender(APIText: string) {
   //add a newline after each section. each section ends with \n
@@ -48,14 +49,14 @@ export default function Consult() {
 
   // const templateStore = useTemplateStore();
   // const textForAPI = formatConsultTextForAPI(templateStore.sections);
-  
+
   useEffect(() => {
     console.log("rawTranscript change");
     if (rawTranscript) {
       consultHandler(rawTranscript);
     }
   }, [rawTranscript]);
-  
+
   //update active template
   useEffect(() => {
     console.log("selected change", templates[selected]);
@@ -76,7 +77,6 @@ export default function Consult() {
     // return;
     const textForAPI = formatConsultTextForAPI(templates[selected].sections);
     console.log("textForAPI", textForAPI);
-
 
     fetch("https://vetbuddy.onrender.com/openai", {
       method: "POST",
@@ -167,10 +167,19 @@ export default function Consult() {
               variant="ghost"
               size="sm"
               className="gap-2 w-full justify-between"
-              onClick={() => {setSelected(index)}}
+              onClick={() => {
+                setSelected(index);
+              }}
             >
-              <span className="font-medium text-slate-600">{template.name}</span>
-              {selected === index && <FontAwesomeIcon className="text-xl text-blue-500" icon={faCheckSquare} />}
+              <span className="font-medium text-slate-600">
+                {template.name}
+              </span>
+              {selected === index && (
+                <FontAwesomeIcon
+                  className="text-xl text-blue-500"
+                  icon={faCheckSquare}
+                />
+              )}
             </Button>
           ))}
         </Card>
@@ -181,7 +190,7 @@ export default function Consult() {
         />
         {/* Displaying activeTemplate properties */}
         <div className="mt-8">
-        {/* <Card className="bg-slate-50 p-4 space-y-4">
+          {/* <Card className="bg-slate-50 p-4 space-y-4">
         {(activeTemplate.sections || []).map((section, index) => (
           <div key={index} className="flex flex-col">
             <P className="font-semibold">{section.name}</P>

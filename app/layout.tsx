@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "./Components/Navbar";
 import { Toaster } from "@/app/Components/ui/toaster";
+import { cn } from "./Lib/utils";
 import { createClient } from "./Lib/supabase/server";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,23 +24,16 @@ export default async function RootLayout({
   const supabase = createClient();
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    console.log("No User found");
-  } else {
-    console.log("User", user);
-  }
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Hydrate>
-          <Navbar user />
-          {/* <main className="bg-white py-12 w-[calc(100vw-40px)] max-w-5xl mx-auto"> */}
-          <main className="bg-white py-12 px-8">{children}</main>
-          <Footer />
-        </Hydrate>
+      <body
+        className={cn(inter.className, "flex flex-col min-h-screen max-w-screen")}
+      >
+        <Navbar user={user} />
+        <main className="bg-white py-12 px-8">{children}</main>
+        <Footer />
         <Toaster />
       </body>
     </html>

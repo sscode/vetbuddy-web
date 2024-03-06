@@ -20,10 +20,12 @@ import { authenticatedNavItems, landingNavItems } from "@/app/Constants";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import React from "react";
+import { User } from "@supabase/supabase-js";
 import { cn } from "@/app/Lib/utils";
+import { signOut } from "@/app/Lib/supabase/client";
 
 type Props = {
-  user?: boolean | object;
+  user?: boolean | User | null;
 };
 
 export default function Navbar({ user }: Props) {
@@ -77,19 +79,19 @@ export default function Navbar({ user }: Props) {
                       </NavigationMenuTrigger>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem>Sign Out</DropdownMenuItem>
+                      <DropdownMenuItem onClick={signOut}>Sign Out</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </NavigationMenuItem>
               </>
             ) : (
               <>
-                <Link href="#" legacyBehavior passHref>
+                <Link href="/login" legacyBehavior passHref>
                   <Button size="sm" variant="ghost">
                     Login
                   </Button>
                 </Link>
-                <Link href="#" legacyBehavior passHref>
+                <Link  href="/signup" legacyBehavior passHref>
                   <Button size="sm" variant="primary">
                     Sign Up
                   </Button>

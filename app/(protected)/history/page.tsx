@@ -1,8 +1,8 @@
-import { H2, P } from "../Components/Typography";
+import { H2, P } from "@/app/Components/Typography";
 
-import { Button } from "../Components/ui/button";
-import { Card } from "../Components/ui/card";
-import { MOCK_HISTORY } from "../Constants/mockData";
+import { Button } from "@/app/Components/ui/button";
+import { Card } from "@/app/Components/ui/card";
+import { MOCK_HISTORY } from "@/app/Constants/mockData";
 import dayjs from "dayjs";
 
 type Record = {
