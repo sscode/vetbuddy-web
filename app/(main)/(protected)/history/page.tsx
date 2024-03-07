@@ -18,7 +18,7 @@ type GroupedRecord = {
   data: Record[];
 };
 
-export default function History() {
+export default async function HistoryPage() {
   // const [sectionText] = useState(
   //   "Consult: 1. Patient Information: - Name: Brian - Species: Fish 2. Reason for Visit: - Closed eyes for three days"
   // );

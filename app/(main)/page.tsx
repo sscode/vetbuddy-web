@@ -1,9 +1,10 @@
-import { Button } from "./Components/ui/button";
+import { Button } from "../Components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "./Lib/supabase/client";
+import { createClient } from "../Lib/supabase/server";
 
 export default async function Home() {
+  const supabase = createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser();

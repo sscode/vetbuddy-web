@@ -22,13 +22,14 @@ import Link from "next/link";
 import React from "react";
 import { User } from "@supabase/supabase-js";
 import { cn } from "@/app/Lib/utils";
-import { signOut } from "@/app/Lib/supabase/client";
+import useSignOut from "@/app/Hooks/useSignOut";
 
 type Props = {
   user?: boolean | User | null;
 };
 
 export default function Navbar({ user }: Props) {
+  const signOut = useSignOut();
   return (
     <header className="w-full">
       <NavigationMenu className="w-full mx-auto max-w-none py-2">
@@ -79,7 +80,9 @@ export default function Navbar({ user }: Props) {
                       </NavigationMenuTrigger>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={signOut}>Sign Out</DropdownMenuItem>
+                      <DropdownMenuItem onClick={signOut}>
+                        Sign Out
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </NavigationMenuItem>
@@ -91,7 +94,7 @@ export default function Navbar({ user }: Props) {
                     Login
                   </Button>
                 </Link>
-                <Link  href="/signup" legacyBehavior passHref>
+                <Link href="/signup" legacyBehavior passHref>
                   <Button size="sm" variant="primary">
                     Sign Up
                   </Button>
