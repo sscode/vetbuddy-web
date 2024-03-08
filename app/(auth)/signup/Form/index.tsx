@@ -15,10 +15,10 @@ import { Card } from "@/app/Components/ui/card";
 import { Input } from "@/app/Components/ui/input";
 import { LoaderIcon } from "lucide-react";
 import { P } from "@/app/Components/Typography";
+import { cn } from "@/app/Lib/utils";
+import { errorMessages } from "@/app/Constants/messages";
 import { supabase } from "@/app/Lib/supabase/client";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/app/Components/ui/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -30,10 +30,9 @@ const formSchema = z.object({
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SignUpForm({ className, ...props }: UserAuthFormProps) {
-  const { toast } = useToast();
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [emailSent, setEmailSent] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [emailSent, setEmailSent] = React.useState<boolean>(false);
+  const [message, setMessage] = React.useState("");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -45,6 +44,7 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
 
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    setMessage("");
     const { email, password } = values;
     try {
       const { error } = await supabase.auth.signUp({
@@ -55,71 +55,88 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
         throw error;
       }
       form.reset();
+      setMessage(
+        "Confirmation e-mail has been sent to your e-mail address. Please Check your email."
+      );
       setEmailSent(true);
     } catch (error) {
-      toast({ title: "An unexpected error has occured, please try again" });
+      if (error instanceof Error) {
+        error?.message
+          ? setMessage(error.message)
+          : setMessage(errorMessages.unexpected);
+      }
       console.error("Error", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if(emailSent){
-    return (
-      <Card className="w-full px-4 py-2">
-        <P className="text-sm">Confirmation e-mail has been sent to your e-mail address. Please Check your email.</P>
-      </Card>
-    )
-  }
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSignUp)}>
-        <div className="grid gap-2">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="flex-grow max-w-[900px]">
-                <FormControl>
-                  <Input
-                    placeholder="name@example.com"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect="off"
-                    disabled={isLoading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+    <>
+      {message && (
+        <Card className="w-full px-4 py-2">
+          <P
+            className={cn(
+              "text-sm text-center",
+              !emailSent ? "text-red-500" : "text-green-500"
             )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="flex-grow max-w-[900px]">
-                <FormControl>
-                  <Input
-                    placeholder="********"
-                    type="password"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    disabled={isLoading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button disabled={isLoading}>
-            {isLoading && <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />}
-            Sign up
-          </Button>
-        </div>
-      </form>
-    </Form>
+          >
+            {message}
+          </P>
+        </Card>
+      )}
+      {!emailSent && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSignUp)}>
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="flex-grow max-w-[900px]">
+                    <FormControl>
+                      <Input
+                        placeholder="name@example.com"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        autoCorrect="off"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="flex-grow max-w-[900px]">
+                    <FormControl>
+                      <Input
+                        placeholder="********"
+                        type="password"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button disabled={isLoading}>
+                {isLoading && (
+                  <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Sign up
+              </Button>
+            </div>
+          </form>
+        </Form>
+      )}
+    </>
   );
 }
