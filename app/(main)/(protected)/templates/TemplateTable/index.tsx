@@ -22,19 +22,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/Components/ui/table";
-import { Template, useTemplatesListStore } from "@/app/store";
+import { Template, useTemplateListStore } from "@/app/store";
 
 import { Button } from "@/app/Components/ui/button";
 import { Checkbox } from "@/app/Components/ui/checkbox";
 import { DeleteFilled } from "@/app/Components/Icons";
+import PopConfirm from "@/app/Components/PopConfirm";
 import dayjs from "dayjs";
+import { useToast } from "@/app/Components/ui/use-toast";
 
 export default function TemplateTable() {
-  const { templates, deleteTemplate } = useTemplatesListStore();
+  const { templates, deleteTemplate, fetchLatestTemplates } =
+    useTemplateListStore();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    fetchLatestTemplates();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteTemplate(id);
+      toast({ title: "Successfully Deleted" });
+    } catch (error) {
+      console.error("Error deleting Template", error);
+      toast({
+        title: "Error deleting Template, please try again",
+        variant: "destructive",
+      });
+    }
+  };
 
   const columns: ColumnDef<Template>[] = [
     {
@@ -90,11 +111,12 @@ export default function TemplateTable() {
         </Button>
       ),
       cell: ({ row }) => {
-        const date: Date = row.getValue("modified");
+        const date: Date = row.original.modified;
+
         if (!date) {
           return "-";
         }
-        const formatted = dayjs(date).format("MM/DD/YYYY HH:MM");
+        const formatted = dayjs(date).format("MM/DD/YYYY HH:mm");
         return <P className="text-slate-500 whitespace-nowrap">{formatted}</P>;
       },
     },
@@ -105,14 +127,14 @@ export default function TemplateTable() {
       cell: ({ row }) => {
         return (
           <div className="flex gap-2 w-full justify-end">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                deleteTemplate(row.index);
+            <PopConfirm
+              onConfirm={() => handleDelete(row.original?.id)}
+              buttonProps={{
+                variant: "ghost",
               }}
             >
               <DeleteFilled className="text-lg text-slate-700 dark:text-slate-400" />
-            </Button>
+            </PopConfirm>
           </div>
         );
       },

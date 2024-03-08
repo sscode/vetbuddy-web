@@ -7,7 +7,6 @@ import {
   faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { useTemplateStore, useTemplatesListStore } from "@/app/store";
 
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
@@ -17,6 +16,7 @@ import Link from "next/link";
 import RecordSettings from "@/app/Components/Recorder/RecordSettings";
 import Recorder from "@/app/Components/Recorder/Recorder";
 import { jsPDF } from "jspdf";
+import { useTemplateListStore } from "@/app/store";
 
 function formatConsultTextForAPI(
   sections: Array<{ name: string; isChecked: boolean }>
@@ -37,7 +37,7 @@ function formatConsultTextRender(APIText: string) {
 }
 
 export default function Consult() {
-  const { templates } = useTemplatesListStore();
+  const { templates } = useTemplateListStore();
 
   const [rawTranscript, setRawTranscript] = useState<String>("");
   const [consultText, setConsultText] = useState<string>("");

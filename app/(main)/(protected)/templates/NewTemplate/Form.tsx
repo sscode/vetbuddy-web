@@ -1,12 +1,14 @@
-import React from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+
 import { Button } from "@/app/Components/ui/button";
-import { Input } from "@/app/Components/ui/input";
 import { Checkbox } from "@/app/Components/ui/checkbox";
-import { z } from "zod";
+import { Input } from "@/app/Components/ui/input";
+import { errorMessages } from "@/app/Constants/messages";
+import { useTemplateListStore } from "@/app/store";
 import { useToast } from "@/app/Components/ui/use-toast";
-import { useTemplatesListStore } from "@/app/store";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   name: z.string().min(1, "Please enter a Template Name."),
@@ -19,7 +21,7 @@ const formSchema = z.object({
 });
 
 export default function NewTemplateForm() {
-  const { addTemplate } = useTemplatesListStore();
+  const { addTemplate, loading } = useTemplateListStore();
   const { toast } = useToast(); // Destructuring to get toast function
 
   const { register, control, handleSubmit, setValue, reset } = useForm({
@@ -40,25 +42,24 @@ export default function NewTemplateForm() {
     name: "sections",
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = async (values: any) => {
     // Remove async if not doing async operations or await inside
     const { name, sections } = values;
-
-    console.log({ name, sections });
-
-    addTemplate({
-      name,
-      modified: new Date().toISOString(),
-      sections,
-    });
-
-    toast({ title: "Successfully added new Template" });
-    reset(); // Resets the form to initial values
+    try {
+      await addTemplate({
+        name,
+        sections,
+      });
+      toast({ title: "Successfully added new Template" });
+      reset(); // Resets the form to initial values
+    } catch (error) {
+      toast({ title: errorMessages.unexpected, variant: "destructive" });
+      console.error("Failed to add template:", error);
+    }
   };
 
   // Function to handle toggle change
   const handleToggleChange = (index: number, isChecked: boolean) => {
-    console.log(`Toggle ${index}: ${isChecked}`);
     setValue(`sections.${index}.isChecked`, isChecked);
   };
 
@@ -79,20 +80,29 @@ export default function NewTemplateForm() {
             {...register(`sections.${index}.isChecked`)}
             onCheckedChange={(val: any) => handleToggleChange(index, val)}
           />
-          <Button type="button" onClick={() => remove(index)}>
+          <Button
+            type="button"
+            onClick={() => remove(index)}
+            disabled={loading}
+          >
             Remove
           </Button>
         </div>
       ))}
 
-      <Button
-        className="mr-2"
-        type="button"
-        onClick={() => append({ name: "", isChecked: false })}
-      >
-        Add Section
-      </Button>
-      <Button type="submit">Save Template</Button>
+      <div className="flex flex-row gap-2 items-center">
+        <Button
+          className="mr-2"
+          type="button"
+          onClick={() => append({ name: "", isChecked: false })}
+          disabled={loading}
+        >
+          Add Section
+        </Button>
+        <Button type="submit" loading={loading}>
+          Save Template
+        </Button>
+      </div>
     </form>
   );
 }

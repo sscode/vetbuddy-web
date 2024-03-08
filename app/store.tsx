@@ -1,74 +1,106 @@
-import { MOCK_TEMPLATES } from "./Constants/mockData";
 import { create } from "zustand";
+import { createClient } from "./Lib/supabase/client";
 import { persist } from "zustand/middleware";
-import { promptSections } from "./data/defaultPrompt";
-
-type TemplateStore = {
-  sections: Array<string>;
-  addSection: (section: string) => void;
-  updateSection: (index: number, newSection: string) => void;
-  deleteSection: (index: number) => void;
-  restoreDefault: () => void;
-};
-
-export const useTemplateStore = create<TemplateStore>()(
-  persist(
-    (set) => ({
-      sections: promptSections,
-      addSection: (section: string) =>
-        set((state: TemplateStore) => ({
-          sections: [...state.sections, section],
-        })),
-      updateSection: (index: number, newSection: string) =>
-        set((state: TemplateStore) => ({
-          sections: state.sections.map((section: string, i: number) =>
-            i === index ? newSection : section
-          ),
-        })),
-      deleteSection: (index: number) =>
-        set((state: TemplateStore) => ({
-          sections: state.sections.filter(
-            (section: string, i: number) => i !== index
-          ),
-        })),
-      restoreDefault: () => set({ sections: promptSections }),
-    }),
-    {
-      name: "template-store",
-    }
-  )
-);
 
 type Section = {
   name: string;
-  isChecked: boolean
-}
+  isChecked: boolean;
+};
 
-export type Template = {
+export type TemplateInput = {
   name: string;
-  modified: string;
   sections: Section[];
 };
 
+export type Template = {
+  id: string;
+  modified: Date;
+} & TemplateInput;
+
 type TemplateListStore = {
   templates: Array<Template>;
-  addTemplate: (newTemplate: Template) => void;
-  deleteTemplate: (index: number) => void;
+  loading: boolean;
+  fetchLatestTemplates: () => Promise<void>;
+  addTemplate: (newTemplate: TemplateInput) => Promise<void>;
+  deleteTemplate: (id: string) => Promise<void>;
 };
 
-export const useTemplatesListStore = create<TemplateListStore>()(
+export const useTemplateListStore = create<TemplateListStore>()(
   persist(
-    (set) => ({
-      templates: MOCK_TEMPLATES,
-      addTemplate: (newTemplate) => set((state) => ({
-        templates: [...state.templates, newTemplate],
-      })),
-      deleteTemplate: (index) => set((state) => ({
-        templates: state.templates.filter((_, i) => i !== index),
-      })),
+    (set, get) => ({
+      templates: [],
+      loading: false,
+      fetchLatestTemplates: async () => {
+        const supabase = createClient();
+        try {
+          const { data, error } = await supabase
+            .from("templates")
+            .select("id, name, modified:updated_at, sections");
+          if (error) {
+            throw error;
+          }
+          set({ templates: data || [] });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      addTemplate: (newTemplate) =>
+        new Promise(async (resolve, reject) => {
+          const supabase = createClient();
+          set({ loading: true });
+          try {
+            const { data, error } = await supabase
+              .from("templates")
+              .insert({
+                name: newTemplate?.name,
+                sections: newTemplate?.sections,
+              })
+              .select("id, name, modified:updated_at, sections")
+              .single();
+            if (error) {
+              throw error;
+            }
+            set((state) => ({
+              templates: [
+                ...state.templates,
+                {
+                  ...data,
+                },
+              ],
+              loading: false,
+            }));
+            resolve();
+          } catch (error) {
+            console.error(error);
+            set({ loading: false });
+            reject(error);
+          }
+        }),
+      deleteTemplate: (id) =>
+        new Promise(async (resolve, reject) => {
+          const supabase = createClient();
+          const prevState = get().templates;
+          set((state) => ({
+            templates: state.templates.filter((template) => template.id !== id),
+          }));
+          try {
+            const { error } = await supabase
+              .from("templates")
+              .delete()
+              .eq("id", id);
+            if (error) {
+              throw error;
+            }
+            resolve();
+          } catch (error) {
+            console.error(error);
+            set({ templates: prevState });
+            reject(error);
+          }
+        }),
     }),
     {
-      name: "templates-list-store",
+      name: "template-list-store",
     }
   )
 );

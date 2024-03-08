@@ -3,10 +3,12 @@ import { H2, P } from "@/app/Components/Typography";
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
 import { MOCK_HISTORY } from "@/app/Constants/mockData";
+import { createClient } from "@/app/Lib/supabase/server";
 import dayjs from "dayjs";
 
 type Record = {
-  date: Date;
+  id: string;
+  created_at: Date;
   name: string;
   animal?: string;
   audio: unknown;
@@ -19,26 +21,17 @@ type GroupedRecord = {
 };
 
 export default async function HistoryPage() {
-  // const [sectionText] = useState(
-  //   "Consult: 1. Patient Information: - Name: Brian - Species: Fish 2. Reason for Visit: - Closed eyes for three days"
-  // );
+  const supabase = createClient();
 
-  // const copyToClipboard = () => {
-  //   navigator.clipboard.writeText(sectionText).then(
-  //     () => {
-  //       // Optionally show a notification or change the icon to indicate success
-  //     },
-  //     (err) => {
-  //       console.error("Could not copy text: ", err);
-  //     }
-  //   );
-  // };
+  const { data, error } = await supabase.from("consults").select();
+
+  const consults = data as Record[];
 
   const groupRecordsByDate = (unsortedRecords: Record[]): GroupedRecord[] => {
     const records: Record[] = unsortedRecords.sort((a, b) => {
-      if (a?.date > b?.date) {
+      if (a?.created_at > b?.created_at) {
         return -1;
-      } else if (a?.date < b?.date) {
+      } else if (a?.created_at < b?.created_at) {
         return 1;
       } else {
         return 0;
@@ -47,10 +40,10 @@ export default async function HistoryPage() {
     const groupedRecords: GroupedRecord[] = Object.values(
       records.reduce(
         (grouped: { [key: string]: GroupedRecord }, record: Record) => {
-          const dateKey = new Date(record.date).toLocaleDateString();
+          const dateKey = new Date(record.created_at).toLocaleDateString();
           if (!grouped[dateKey]) {
             grouped[dateKey] = {
-              title: `${dayjs(record.date).format("dddd, MMMM D, YYYY")}`,
+              title: `${dayjs(record.created_at).format("dddd, MMMM D, YYYY")}`,
               data: [],
             };
           }
@@ -66,9 +59,9 @@ export default async function HistoryPage() {
   return (
     <>
       <H2 className="mb-12">Consult History</H2>
-      {groupRecordsByDate(MOCK_HISTORY)?.length ? (
+      {groupRecordsByDate(consults)?.length ? (
         <div className="flex flex-col gap-10 my-4">
-          {groupRecordsByDate(MOCK_HISTORY).map((groupRecord, index) => (
+          {groupRecordsByDate(consults).map((groupRecord, index) => (
             <div key={index} className="flex flex-col gap-2">
               <H2>{groupRecord.title}</H2>
               <div className="flex flex-col gap-2">
@@ -83,7 +76,7 @@ export default async function HistoryPage() {
                         {record.animal && " - " + record.animal}
                       </P>
                       <P className="text-sm text-neutral-500 font-medium">
-                        {dayjs(record.date).format("h:mma")}
+                        {dayjs(record.created_at).format("h:mma")}
                       </P>
                     </div>
                     <div className="flex flex-row gap-2">
