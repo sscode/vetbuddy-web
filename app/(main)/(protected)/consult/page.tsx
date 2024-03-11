@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/Components/ui/form";
+import { H2, P } from "@/app/Components/Typography";
 import { Template, useTemplateListStore } from "@/app/store";
 import {
   copyToClipboard,
@@ -26,7 +27,6 @@ import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { H2 } from "@/app/Components/Typography";
 import { Input } from "@/app/Components/ui/input";
 import Recorder from "@/app/Components/Recorder/Recorder";
 import { createClient } from "@/app/Lib/supabase/client";
@@ -196,27 +196,31 @@ export default function Consult() {
           <div>
             <FormLabel>Template</FormLabel>
             <Card className="bg-slate-50 p-4 w-full md:max-w-80 space-y-1">
-              {templates.map((template, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 w-full justify-between"
-                  onClick={() => {
-                    setSelected(template);
-                  }}
-                >
-                  <span className="font-medium text-slate-600">
-                    {template.name}
-                  </span>
-                  {selected === template && (
-                    <FontAwesomeIcon
-                      className="text-xl text-blue-500"
-                      icon={faCheckSquare}
-                    />
-                  )}
-                </Button>
-              ))}
+              {templates?.length ? (
+                templates.map((template, index) => (
+                  <Button
+                    key={index}
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 w-full justify-between"
+                    onClick={() => {
+                      setSelected(template);
+                    }}
+                  >
+                    <span className="font-medium text-slate-600">
+                      {template.name}
+                    </span>
+                    {selected === template && (
+                      <FontAwesomeIcon
+                        className="text-xl text-blue-500"
+                        icon={faCheckSquare}
+                      />
+                    )}
+                  </Button>
+                ))
+              ) : (
+                <P className="text-red-500 font-medium">Please Create a Template first</P>
+              )}
             </Card>
           </div>
           <FormField
