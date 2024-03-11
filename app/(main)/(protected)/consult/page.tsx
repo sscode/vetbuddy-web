@@ -219,7 +219,9 @@ export default function Consult() {
                   </Button>
                 ))
               ) : (
-                <P className="text-red-500 font-medium">Please Create a Template first</P>
+                <P className="text-red-500 font-medium">
+                  Please Create a Template first
+                </P>
               )}
             </Card>
           </div>
@@ -256,16 +258,10 @@ export default function Consult() {
             <Button
               className="w-full md:max-w-80"
               variant="primary"
-              disabled={isLoading}
+              loading={isLoading}
               type="submit"
             >
-              {isLoading ? (
-                <div className="px-12">
-                  <ClipLoader color="#000" />
-                </div>
-              ) : (
-                "Generate Consult"
-              )}
+              Generate Consult
             </Button>
           )}
         </form>

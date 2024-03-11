@@ -18,7 +18,7 @@ export default async function MainLayout({
   return (
     <Hydrate>
       <Navbar user={session?.user} />
-      <main className="bg-white py-12 px-8 flex-grow">{children}</main>
+      <main className="bg-white py-12 px-8 flex flex-col flex-grow">{children}</main>
       <Footer />
       <Toaster />
     </Hydrate>

@@ -28,7 +28,7 @@ export default function RecordButton({
       {icon && (
         <div className="bg-white rounded-full aspect-square w-8 h-8 flex justify-center items-center">
           <FontAwesomeIcon
-            className="text-black relative left-[2px] group-hover:text-green-500 text-lg drop-shadow-lg transition-[200ms]"
+            className="text-black group-hover:text-green-500 text-lg drop-shadow-lg transition-[200ms]"
             icon={icon}
           />
         </div>

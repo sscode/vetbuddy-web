@@ -5,7 +5,7 @@ type Props = {}
 
 export default function LoadingScreen({}: Props) {
   return (
-    <div className="w-full h-full flex-grow items-center justify-center">
+    <div className="w-full h-full flex flex-grow items-center justify-center">
       <LoadingIndicator />
     </div>
   )

@@ -2,6 +2,7 @@ import { H2, P } from "@/app/Components/Typography";
 
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
+import Link from "next/link";
 import { Template } from "@/app/store";
 import { createClient } from "@/app/Lib/supabase/server";
 import dayjs from "dayjs";
@@ -11,7 +12,7 @@ type Record = {
   created_at: Date;
   name: string;
   template?: Template;
-  audio: unknown;
+  audio_url: string;
   consult: unknown;
 };
 
@@ -82,6 +83,7 @@ export default async function HistoryPage() {
                       </P>
                     </div>
                     <div className="flex flex-row gap-2">
+                      {/* <HistoryAudioButton audioURL={record.audio_url} /> */}
                       <Button
                         size="sm"
                         variant="ghost"
@@ -106,7 +108,9 @@ export default async function HistoryPage() {
       ) : (
         <div className="flex flex-col items-center justify-center py-8 gap-4">
           <P className="font-medium text-neutral-500">No Records Found</P>
-          <Button variant="outline">New Consult</Button>
+          <Link href="/consult" passHref legacyBehavior>
+            <Button variant="outline">New Consult</Button>
+          </Link>
         </div>
       )}
     </>
