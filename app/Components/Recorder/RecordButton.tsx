@@ -20,7 +20,7 @@ export default function RecordButton({
   return (
     <Button
       className={cn(
-        "bg-black py-2 px-4 hover:bg-green-500 space-x-2 h-auto w-80 justify-start",
+        "bg-black py-2 px-4 group hover:bg-green-500 space-x-2 h-auto w-80 justify-start",
         className
       )}
       onClick={onClick}
@@ -28,7 +28,7 @@ export default function RecordButton({
       {icon && (
         <div className="bg-white rounded-full aspect-square w-8 h-8 flex justify-center items-center">
           <FontAwesomeIcon
-            className="text-black text-lg drop-shadow-lg"
+            className="text-black relative left-[2px] group-hover:text-green-500 text-lg drop-shadow-lg transition-[200ms]"
             icon={icon}
           />
         </div>

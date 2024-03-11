@@ -1,14 +1,12 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
 import {
-  faMicrophone,
-  faMicrophoneSlash,
   faPlay,
-  faSlash,
   faStop,
 } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useRef, useState } from "react";
 
 import { ClipLoader } from "react-spinners";
 import RecordButton from "./RecordButton";
+import { useToast } from "../ui/use-toast";
 
 type RecorderProps = {
   recording: boolean; // This defines recording as a boolean
@@ -28,6 +26,8 @@ export default function Recorder({
   const audioChunksRef = useRef<Blob[]>([]);
   const [dots, setDots] = useState(".");
 
+  const { toast } = useToast();
+
   const uploadRecording = async (audioBlob: Blob) => {
     setIsUploading(true);
 
@@ -46,7 +46,7 @@ export default function Recorder({
       });
 
       setIsUploading(false);
-      alert("Recording uploaded successfully");
+      toast({ title: "Recording uploaded successfully" });
       const fileAccessURL = `https://vetbuddy.s3.us-west-2.amazonaws.com/${key}`;
       setAWSURL(fileAccessURL);
     } catch (error) {
@@ -123,7 +123,7 @@ export default function Recorder({
   }, []);
 
   return (
-    <div className="mt-12 h-18">
+    <>
       {isUploading && <ClipLoader color="#000" />}
       {recording ? (
         <RecordButton
@@ -148,6 +148,6 @@ export default function Recorder({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

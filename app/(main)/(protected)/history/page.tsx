@@ -2,7 +2,7 @@ import { H2, P } from "@/app/Components/Typography";
 
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
-import { MOCK_HISTORY } from "@/app/Constants/mockData";
+import { Template } from "@/app/store";
 import { createClient } from "@/app/Lib/supabase/server";
 import dayjs from "dayjs";
 
@@ -10,7 +10,7 @@ type Record = {
   id: string;
   created_at: Date;
   name: string;
-  animal?: string;
+  template?: Template;
   audio: unknown;
   consult: unknown;
 };
@@ -23,7 +23,9 @@ type GroupedRecord = {
 export default async function HistoryPage() {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from("consults").select();
+  const { data, error } = await supabase
+    .from("consults")
+    .select("*, template:templates(*)");
 
   const consults = data as Record[];
 
@@ -73,7 +75,7 @@ export default async function HistoryPage() {
                     <div>
                       <P className="text-sm font-medium">
                         {record.name}
-                        {record.animal && " - " + record.animal}
+                        {record?.template && " - " + record.template.name}
                       </P>
                       <P className="text-sm text-neutral-500 font-medium">
                         {dayjs(record.created_at).format("h:mma")}

@@ -1,6 +1,20 @@
 "use client";
 
-import { H2, P } from "@/app/Components/Typography";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/Components/ui/form";
+import { Template, useTemplateListStore } from "@/app/store";
+import {
+  copyToClipboard,
+  downloadPDF,
+  formatConsultTextForAPI,
+  formatConsultTextRender,
+} from "@/app/Lib/utils";
 import {
   faCheckSquare,
   faClipboard,
@@ -12,29 +26,14 @@ import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
-import RecordSettings from "@/app/Components/Recorder/RecordSettings";
+import { H2 } from "@/app/Components/Typography";
+import { Input } from "@/app/Components/ui/input";
 import Recorder from "@/app/Components/Recorder/Recorder";
-import { jsPDF } from "jspdf";
-import { useTemplateListStore } from "@/app/store";
-
-function formatConsultTextForAPI(
-  sections: Array<{ name: string; isChecked: boolean }>
-) {
-  // Transform each section with its index and name. Prepend special instructions if isChecked is true.
-  const formattedSections = sections.map((section, index) => {
-    const prefix = section.isChecked ? "**SPECIAL INSTRUCTIONS**\n" : "";
-    return `${prefix}${index + 1}. ${section.name}`;
-  });
-
-  // Join all transformed strings together with a newline character
-  return formattedSections.join("\n");
-}
-
-function formatConsultTextRender(APIText: string) {
-  //add a newline after each section. each section ends with \n
-  return APIText.split("\n").join("\n\n");
-}
+import { createClient } from "@/app/Lib/supabase/client";
+import { useForm } from "react-hook-form";
+import { useToast } from "@/app/Components/ui/use-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function Consult() {
   const { templates } = useTemplateListStore();
@@ -44,24 +43,18 @@ export default function Consult() {
   const [awsURL, setAWSURL] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(false);
-  const [selected, setSelected] = useState<number>(0);
-  const [activeTemplate, setActiveTemplate] = useState(templates[selected]);
+  const [selected, setSelected] = useState<Template | null>(
+    templates?.length ? templates[0] : null
+  );
 
-  // const templateStore = useTemplateStore();
-  // const textForAPI = formatConsultTextForAPI(templateStore.sections);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    console.log("rawTranscript change");
-    if (rawTranscript) {
-      consultHandler(rawTranscript);
-    }
-  }, [rawTranscript]);
-
-  //update active template
-  useEffect(() => {
-    console.log("selected change", templates[selected]);
-    setActiveTemplate(templates[selected]);
-  }, [selected]);
+  // useEffect(() => {
+  //   console.log("rawTranscript change");
+  //   if (rawTranscript) {
+  //     consultHandler(rawTranscript);
+  //   }
+  // }, [rawTranscript]);
 
   //delete consult on new recording
   useEffect(() => {
@@ -72,29 +65,56 @@ export default function Consult() {
     }
   }, [recording]);
 
-  const consultHandler = (transcript: any) => {
-    // console.log("textForAPI", templates[selected].sections);
-    // return;
-    const textForAPI = formatConsultTextForAPI(templates[selected].sections);
-    console.log("textForAPI", textForAPI);
+  // const consultHandler = (transcript: any) => {
+  //   if (!selected) return;
+  //   const textForAPI = formatConsultTextForAPI(selected.sections);
+  //   console.log("textForAPI", textForAPI);
 
-    fetch("https://vetbuddy.onrender.com/openai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ transcript, textForAPI }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("data:", data.text);
-        setConsultText(formatConsultTextRender(data.text));
-        setIsLoading(false);
-      })
-      .catch((err) => console.log(err));
-  };
+  //   fetch("https://vetbuddy.onrender.com/openai", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ transcript, textForAPI }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then(async (data) => {
+  //       console.log("data:", data.text);
+  //       setConsultText(formatConsultTextRender(data.text));
+  //       await updateDatabase(data.text);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
-  const handleTranscription = () => {
+  // const handleTranscription = () => {
+  //   if (!awsURL) {
+  //     alert("No recording URL available");
+  //     return;
+  //   }
+
+  //   setRawTranscript("");
+  //   setIsLoading(true);
+
+  //   fetch(
+  //     `https://vetbuddy.onrender.com/deepgram?url=${encodeURIComponent(awsURL)}`
+  //   )
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       // Handle the transcription data
+  //       // setConsultText(data.text);
+  //       const transcript = data.results.channels[0].alternatives[0].transcript;
+  //       setRawTranscript(transcript);
+  //     })
+  //     .catch((err) => {
+  //       setIsLoading(false);
+  //       console.error("Error in transcription:", err);
+  //       alert("Error in transcription");
+  //     });
+  // };
+
+  const handleSubmit = async () => {
+    if (!selected) return;
     if (!awsURL) {
       alert("No recording URL available");
       return;
@@ -102,146 +122,174 @@ export default function Consult() {
 
     setRawTranscript("");
     setIsLoading(true);
+    try {
+      const deepgramRes = await fetch(
+        `https://vetbuddy.onrender.com/deepgram?url=${encodeURIComponent(
+          awsURL
+        )}`
+      );
+      const deepgramdata = await deepgramRes.json();
+      const transcript =
+        deepgramdata.results.channels[0].alternatives[0].transcript;
 
-    fetch(
-      `https://vetbuddy.onrender.com/deepgram?url=${encodeURIComponent(awsURL)}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        // Handle the transcription data
-        // setConsultText(data.text);
-        const transcript = data.results.channels[0].alternatives[0].transcript;
-        setRawTranscript(transcript);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.error("Error in transcription:", err);
-        alert("Error in transcription");
+      // consultHandler(rawTranscript);
+      const textForAPI = formatConsultTextForAPI(selected.sections);
+      console.log("textForAPI", textForAPI);
+
+      const openaiRes = await fetch("https://vetbuddy.onrender.com/openai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript, textForAPI }),
       });
-  };
+      const openaiData = await openaiRes.json();
+      console.log("data:", openaiData.text);
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(consultText).then(
-      () => {
-        // Optionally show a notification or change the icon to indicate success
-      },
-      (err) => {
-        console.error("Could not copy text: ", err);
+      const { error } = await supabase.from("consults").insert({
+        template_id: selected?.id,
+        name: form.getValues().name,
+        audio_url: awsURL,
+        transcript,
+        content: consultText,
+      });
+      if (error) {
+        throw error;
       }
-    );
-  };
-
-  const downloadPDF = () => {
-    // Create a new jsPDF instance
-    const doc = new jsPDF();
-
-    // Add text to PDF
-    doc.text(consultText, 10, 30); // Adjust the position as needed
-
-    //get date in format DDMMYYYY
-    const date = new Date();
-    let day = date.getDate();
-
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    let zero = "";
-    if (day < 10) {
-      zero = `0`;
+      setConsultText(formatConsultTextRender(openaiData.text));
+      toast({ title: "Successfully Added Consultation" });
+    } catch (error) {
+      console.error("Error in transcription:", error);
+      toast({ title: "Error in Transcription", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
     }
-    const dateString = `${zero}${day}${month}${year}`;
-
-    // Save the PDF
-    doc.save(`vetbuddy-${dateString}.pdf`);
   };
+
+  const supabase = createClient();
+
+  const formSchema = z.object({
+    template_id: z.string(),
+    name: z.string().min(1, "Please enter your/patient's name."),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      template_id: "",
+      name: "",
+    },
+  });
 
   return (
-    <>
-      <div className="mt-12">
-        {/* <Header /> */}
-        <H2>New Consult</H2>
-        {/* <RecordSettings /> */}
-        <Card className="bg-slate-50 p-4 w-64 space-y-1 mt-8">
-          {templates.map((template, index) => (
-            <Button
-              key={index}
-              variant="ghost"
-              size="sm"
-              className="gap-2 w-full justify-between"
-              onClick={() => {
-                setSelected(index);
-              }}
-            >
-              <span className="font-medium text-slate-600">
-                {template.name}
-              </span>
-              {selected === index && (
-                <FontAwesomeIcon
-                  className="text-xl text-blue-500"
-                  icon={faCheckSquare}
-                />
-              )}
-            </Button>
-          ))}
-        </Card>
-        <Recorder
-          recording={recording}
-          setRecording={setRecording}
-          setAWSURL={setAWSURL}
-        />
-        {/* Displaying activeTemplate properties */}
-        <div className="mt-8">
-          {/* <Card className="bg-slate-50 p-4 space-y-4">
+    <div className="mt-12">
+      {/* <Header /> */}
+      <H2>New Consult</H2>
+      {/* <RecordSettings /> */}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit((values) => {
+            handleSubmit();
+          })}
+          className="flex flex-col gap-4 my-8"
+        >
+          <div>
+            <FormLabel>Template</FormLabel>
+            <Card className="bg-slate-50 p-4 w-full md:max-w-80 space-y-1">
+              {templates.map((template, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 w-full justify-between"
+                  onClick={() => {
+                    setSelected(template);
+                  }}
+                >
+                  <span className="font-medium text-slate-600">
+                    {template.name}
+                  </span>
+                  {selected === template && (
+                    <FontAwesomeIcon
+                      className="text-xl text-blue-500"
+                      icon={faCheckSquare}
+                    />
+                  )}
+                </Button>
+              ))}
+            </Card>
+          </div>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="md:max-w-80">
+                <FormLabel>Patient's name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Tom" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Recorder
+            recording={recording}
+            setRecording={setRecording}
+            setAWSURL={setAWSURL}
+          />
+          {/* Displaying activeTemplate properties */}
+          {/* <div className="mt-8">
+            <Card className="bg-slate-50 p-4 space-y-4">
         {(activeTemplate.sections || []).map((section, index) => (
           <div key={index} className="flex flex-col">
             <P className="font-semibold">{section.name}</P>
             <P>{section.isChecked ? 'Checked' : 'Not Checked'}</P>
           </div>
         ))}
-        </Card> */}
-        </div>
-        {awsURL && !consultText && (
-          <button
-            onClick={handleTranscription}
-            className="mt-8 py-3 px-8 bg-blue-500 hover:bg-blue-700 text-white rounded"
-            disabled={isLoading}
+        </Card>
+          </div> */}
+          {awsURL && !consultText && (
+            <Button
+              className="w-full md:max-w-80"
+              variant="primary"
+              disabled={isLoading}
+              type="submit"
+            >
+              {isLoading ? (
+                <div className="px-12">
+                  <ClipLoader color="#000" />
+                </div>
+              ) : (
+                "Generate Consult"
+              )}
+            </Button>
+          )}
+        </form>
+      </Form>
+
+      {consultText && (
+        <div className="flex">
+          <div
+            className="w-16 p-2 mt-4 mr-2 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
+            onClick={() => copyToClipboard(consultText)} // Add the onClick event handler here
           >
-            {isLoading ? (
-              <div className="px-12">
-                <ClipLoader color="#000" />
-              </div>
-            ) : (
-              "Generate Consult"
-            )}
-          </button>
-        )}
-
-        {consultText && (
-          <div className="flex">
-            <div
-              className="w-16 p-2 mt-4 mr-2 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
-              onClick={copyToClipboard} // Add the onClick event handler here
-            >
-              <FontAwesomeIcon
-                className="text-black text-2xl"
-                icon={faClipboard}
-              />
-            </div>
-            <div
-              className="w-16 p-2 mt-4 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
-              onClick={downloadPDF} // Add the onClick event handler here
-            >
-              <FontAwesomeIcon
-                className="text-black text-2xl"
-                icon={faFilePdf}
-              />
-            </div>
+            <FontAwesomeIcon
+              className="text-black text-2xl"
+              icon={faClipboard}
+            />
           </div>
-        )}
+          <div
+            className="w-16 p-2 mt-4 bg-slate-300 flex justify-center items-center rounded-md cursor-pointer hover:bg-slate-200 transition-all duration-300 ease-in-out"
+            onClick={() => downloadPDF(consultText)} // Add the onClick event handler here
+          >
+            <FontAwesomeIcon className="text-black text-2xl" icon={faFilePdf} />
+          </div>
+        </div>
+      )}
 
-        <pre className="text-black mt-4 whitespace-pre-wrap overflow-auto">
-          {consultText}
-        </pre>
-      </div>
-    </>
+      <pre className="text-black mt-4 whitespace-pre-wrap overflow-auto">
+        {consultText}
+      </pre>
+    </div>
   );
 }
