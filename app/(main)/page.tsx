@@ -4,12 +4,12 @@ import Link from "next/link";
 import { createClient } from "../Lib/supabase/server";
 
 export default async function Home() {
-  const supabase = createClient()
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col flex-grow">
       <div className="text-center">
         <h1 className="text-5xl font-bold mb-1">More consults, less admin</h1>
         <p className="text-l mb-12">
@@ -17,7 +17,7 @@ export default async function Home() {
           clinic.
         </p>
       </div>
-      {!!user && (
+      {user ? (
         <div className="grid grid-cols-2 gap-4 items-center w-full max-w-4xl mx-auto">
           <div className="justify-self-center">
             <Image src="/dogglasses.jpeg" width={300} height={300} alt="logo" />
@@ -35,6 +35,12 @@ export default async function Home() {
             </Link>
           </div>
         </div>
+      ) : (
+        <Link href="/signup" passHref legacyBehavior>
+          <Button className="md:max-w-64 mx-auto w-full" size="lg" variant="outline">
+            Get Started
+          </Button>
+        </Link>
       )}
 
       {/* <Footer /> */}
