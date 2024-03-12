@@ -20,12 +20,13 @@ import { authenticatedNavItems, landingNavItems } from "@/app/Constants";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import React from "react";
+import { Separator } from "../ui/separator";
 import { User } from "@supabase/supabase-js";
 import { cn } from "@/app/Lib/utils";
 import useSignOut from "@/app/Hooks/useSignOut";
 
 type Props = {
-  user?: boolean | User | null;
+  user?: User | null;
 };
 
 export default function Navbar({ user }: Props) {
@@ -75,11 +76,15 @@ export default function Navbar({ user }: Props) {
                     <DropdownMenuTrigger asChild>
                       <NavigationMenuTrigger className="hover:bg-transparent focus:bg-transparent hover:text-black data-[active]:bg-transparent data-[state=open]:bg-transparent">
                         <Avatar>
-                          <AvatarFallback>CN</AvatarFallback>
+                          <AvatarFallback>{user?.email && user.email[0].toUpperCase()}</AvatarFallback>
                         </Avatar>
                       </NavigationMenuTrigger>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                      <DropdownMenuItem disabled>
+                        {user.email}
+                      </DropdownMenuItem>
+                      <Separator />
                       <DropdownMenuItem onClick={signOut}>
                         Sign Out
                       </DropdownMenuItem>
