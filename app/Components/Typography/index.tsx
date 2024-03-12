@@ -65,7 +65,7 @@ export function H4({ children, className, ...props }: HeadingProps) {
 export function P({ children, className, ...props }: PProps) {
   return (
     <p
-      className={cn("leading-7 [&:not(:first-child)]:mt-2", className)}
+      className={cn("leading-7 text-sm [&:not(:first-child)]:mt-2", className)}
       {...props}
     >
       {children}

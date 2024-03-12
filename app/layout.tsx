@@ -1,11 +1,9 @@
 import "./globals.css";
 
-import Hydrate from "./Components/Hydrate";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
-import Navbar from "./Components/Navbar";
 import { Toaster } from "@/app/Components/ui/toaster";
-import Footer from "./homepage/Footer";
+import { cn } from "./Lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,22 +12,23 @@ export const metadata: Metadata = {
   description: "Record consults with AI transcriptions.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Hydrate>
-          <Navbar user />
-          {/* <main className="bg-white py-12 w-[calc(100vw-40px)] max-w-5xl mx-auto"> */}
-          <main className="bg-white py-12 px-8">
-            {children}
-          </main>
-          <Footer />
-        </Hydrate>
+      <body
+        className={cn(
+          inter.className,
+          "flex flex-col min-h-screen max-w-screen"
+        )}
+      >
+        {/* <Navbar user={session?.user} />
+        <main className="bg-white py-12 px-8 flex-grow">{children}</main>
+        <Footer /> */}
+        {children}
         <Toaster />
       </body>
     </html>

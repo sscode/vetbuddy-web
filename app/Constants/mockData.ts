@@ -41,17 +41,20 @@ export const MOCK_HISTORY: {
 
 export const MOCK_TEMPLATES: Template[] = [
   {
+    id: "asda",
     name: "Consult 1",
-    modified: "1-2-2024",
+    modified: new Date(),
     sections: []
   },
   {
+    id: "asdasfda",
     name: "Example",
-    modified: "1-3-2024",
+    modified: new Date(),
     sections: []  },
   {
+    id: "asdasdasdfhfdasfda",
     name: "Example 2",
-    modified: "1-4-2024",
+    modified: new Date(),
     sections: []
   },
 ];
