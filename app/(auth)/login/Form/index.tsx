@@ -104,8 +104,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
               </FormItem>
             )}
           />
-          <Button disabled={isLoading}>
-            {isLoading && <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />}
+          <Button type="submit" loading={isLoading}>
             Login
           </Button>
         </div>

@@ -20,7 +20,7 @@ export default async function ProtectedLayout({
   return (
     <main className="flex-grow px-4 py-8">
       <Link href="/">
-        <H1 className="p-4 mx-auto w-fit text-black">VetBuddy</H1>
+        <H1 className="p-4 mx-auto w-fit text-black">VetBuddy.AI</H1>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 max-w-[480px]">
         {children}
