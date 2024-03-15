@@ -1,30 +1,41 @@
-export const landingNavItems = (
-  user: boolean
-) => [
-  {
-    title: "Home",
-    link: "/",
-  },
-  ...(!user
+export const landingNavItems = (user: boolean) => [
+  ...(user
     ? [
         {
-          title: "Products",
-          link: "#",
-        },
-        {
-          title: "Works",
-          link: "#",
-        },
-        {
-          title: "Pricing",
-          link: "#",
-        },
-        {
-          title: "Team",
-          link: "#",
+          title: "Home",
+          link: "/",
         },
       ]
     : []),
+  // ...(!user
+  //   ? [
+  //       {
+  //         title: "Home",
+  //         link: "/",
+  //       },
+  //       {
+  //         title: "Products",
+  //         link: "#",
+  //       },
+  //       {
+  //         title: "Works",
+  //         link: "#",
+  //       },
+  //       {
+  //         title: "Pricing",
+  //         link: "#",
+  //       },
+  //       {
+  //         title: "Team",
+  //         link: "#",
+  //       },
+  //     ]
+  //   : [
+  //       {
+  //         title: "Home",
+  //         link: "/",
+  //       },
+  //     ]),
 ];
 
 export const authenticatedNavItems = [
