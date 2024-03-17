@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: "'__Inter_aaf875', '__Inter_Fallback_aaf875', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"
+        inter: ['var(--font-inter)'],
       },
       colors: {
         border: "hsl(var(--border))",

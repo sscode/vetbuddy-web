@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Toaster } from "@/app/Components/ui/toaster";
 import { cn } from "./Lib/utils";
 
-const inter = Inter({ subsets: ["latin"] });
+export const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "VetBuddy",
@@ -21,8 +21,8 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          inter.className,
-          "flex flex-col min-h-screen max-w-screen"
+          "flex flex-col min-h-screen max-w-screen",
+          inter.variable
         )}
       >
         {/* <Navbar user={session?.user} />
