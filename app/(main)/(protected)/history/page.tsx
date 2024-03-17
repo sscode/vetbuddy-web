@@ -21,7 +21,7 @@ type GroupedRecord = {
   data: Record[];
 };
 
-export default async function HistoryPage() {
+const getHistory = async () => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -29,6 +29,12 @@ export default async function HistoryPage() {
     .select("*, template:templates(*)");
 
   const consults = data as Record[];
+
+  return consults;
+};
+
+export default async function HistoryPage() {
+  const consults = await getHistory();
 
   const groupRecordsByDate = (unsortedRecords: Record[]): GroupedRecord[] => {
     const records: Record[] = unsortedRecords.sort((a, b) => {
@@ -58,7 +64,6 @@ export default async function HistoryPage() {
     );
     return groupedRecords;
   };
-
   return (
     <>
       <H2 className="mb-12">Consult History</H2>

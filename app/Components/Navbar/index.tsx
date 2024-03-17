@@ -23,14 +23,16 @@ import React from "react";
 import { Separator } from "../ui/separator";
 import { User } from "@supabase/supabase-js";
 import { cn } from "@/app/Lib/utils";
-import useSignOut from "@/app/Hooks/useSignOut";
+import { signOut } from "@/app/Actions/signout";
 
 type Props = {
   user?: User | null;
 };
 
 export default function Navbar({ user }: Props) {
-  const signOut = useSignOut();
+  const handleSignout = async () => {
+    await signOut()
+  }
   return (
     <header className="w-full">
       <NavigationMenu className="w-full mx-auto max-w-none py-2">
@@ -52,7 +54,7 @@ export default function Navbar({ user }: Props) {
             ))}
           </div>
 
-          <div className="text-lg font-bold text-center">VetBuddy.AI</div>
+          <h1 className="text-xl font-bold text-center">VetBuddy.AI</h1>
 
           <div className="flex gap-1 max-w-[400px] flex-grow justify-end items-center">
             {user ? (
@@ -85,7 +87,7 @@ export default function Navbar({ user }: Props) {
                         {user.email}
                       </DropdownMenuItem>
                       <Separator />
-                      <DropdownMenuItem onClick={signOut}>
+                      <DropdownMenuItem onClick={handleSignout}>
                         Sign Out
                       </DropdownMenuItem>
                     </DropdownMenuContent>

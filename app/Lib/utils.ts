@@ -1,16 +1,16 @@
-import { type ClassValue, clsx } from "clsx"
+import { type ClassValue, clsx } from "clsx";
 import jsPDF from "jspdf";
-import { twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export const copyToClipboard = (text:string) => {
-  navigator.clipboard.writeText(text)
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
 };
 
-export const downloadPDF = (text:string) => {
+export const downloadPDF = (text: string) => {
   // Create a new jsPDF instance
   const doc = new jsPDF();
 
@@ -49,4 +49,12 @@ export function formatConsultTextForAPI(
 export function formatConsultTextRender(APIText: string) {
   //add a newline after each section. each section ends with \n
   return APIText.split("\n").join("\n\n");
+}
+
+export const makeFormData = (values: { [key: string]: any }):FormData => {
+  const formData = new FormData();
+  Object.keys(values).map((value: string) => {
+    formData.append(value, values[value]);
+  });
+  return formData;
 }
