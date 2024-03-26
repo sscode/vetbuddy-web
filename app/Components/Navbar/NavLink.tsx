@@ -15,7 +15,7 @@ export default function NavLink({ children, href }: Props) {
   const pathname = usePathname();
 
   const active = useMemo(() => {
-    return href === "/templates" || pathname === href;
+    return pathname === href;
   }, [pathname]);
 
   return (

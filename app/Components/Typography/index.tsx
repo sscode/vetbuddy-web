@@ -72,3 +72,14 @@ export function P({ children, className, ...props }: PProps) {
     </p>
   );
 }
+
+export function Span({ children, className, ...props }: PProps) {
+  return (
+    <span
+      className={cn("text-sm", className)}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+}
