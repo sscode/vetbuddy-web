@@ -31,7 +31,7 @@ export default function Navbar({ user }: Props) {
   const signOut = useSignOut();
   return (
     <header className="w-full">
-      <NavigationMenu className="w-full mx-auto max-w-none py-2 bg-gray-50 md:h-24">
+      <NavigationMenu className="w-full mx-auto max-w-none py-2 bg-white md:h-24">
         <NavigationMenuList className="w-[calc(100vw-2vw-80px)] justify-between">
           <div className="flex gap-2 items-center">
             <Image
