@@ -82,7 +82,7 @@ export default function Navbar({ user }: Props) {
                         </AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent align="end">
                       <DropdownMenuItem disabled>{user.email}</DropdownMenuItem>
                       <Separator />
                       <DropdownMenuItem onClick={signOut}>

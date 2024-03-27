@@ -69,6 +69,7 @@ export default function NewTemplateModal({ children }: Props) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const onSubmit = async (values: any) => {
     // Remove async if not doing async operations or await inside
@@ -82,7 +83,8 @@ export default function NewTemplateModal({ children }: Props) {
       setLoading(true)
       await addTemplate(formData);
       toast({ title: "Successfully added new Template" });
-      reset(); // Resets the form to initial values
+      reset();
+      setOpen(false)
     } catch (error) {
       toast({ title: errorMessages.unexpected, variant: "destructive" });
       console.error("Failed to add template:", error);
@@ -97,7 +99,7 @@ export default function NewTemplateModal({ children }: Props) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader className="flex-row items-center gap-2">

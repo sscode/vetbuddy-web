@@ -9,14 +9,18 @@ export default async function MainLayout({
 }>) {
   const supabase = createClient();
   const {
-    data: { session },
+    data: { user },
     error,
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
 
   return (
     <Hydrate>
-      <Navbar user={session?.user} />
-      <main className="py-12 px-8 flex flex-col flex-grow">{children}</main>
+      <Navbar user={user} />
+      <main className="w-full bg-[#FBFDFF] flex flex-col flex-grow">
+        <div className="py-12 max-w-7xl w-[calc(100%-40px)] mx-auto flex flex-col flex-grow">
+          {children}
+        </div>
+      </main>
     </Hydrate>
   );
 }

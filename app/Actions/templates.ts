@@ -23,3 +23,19 @@ export const addTemplate = async (formData: FormData) => {
 
   return data;
 };
+
+export const deleteTemplate = async (formData: FormData) => {
+  const id = formData.get("id");
+
+  const supabase = createClient();
+  const { data, error } = await supabase.from("templates").delete().eq("id", id);
+
+  if (error) {
+    throw error;
+  }
+
+  revalidatePath("/");
+
+  return data;
+};
+

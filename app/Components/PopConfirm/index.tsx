@@ -15,8 +15,9 @@ import React from "react";
 
 type Props = {
   open?: boolean;
+  onOpenChange?: (open:boolean) => void;
   message?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   description?: string;
   onConfirm?: () => void;
   buttonProps?: ButtonProps & React.RefAttributes<HTMLButtonElement>;
@@ -27,12 +28,15 @@ export default function PopConfirm({
   children,
   description,
   open,
+  onOpenChange,
   onConfirm,
   buttonProps,
 }: Props) {
   return (
-    <AlertDialog open={open}>
-      <AlertDialogTrigger {...buttonProps}>{children}</AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      {children && (
+        <AlertDialogTrigger {...buttonProps}>{children}</AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{message}</AlertDialogTitle>
