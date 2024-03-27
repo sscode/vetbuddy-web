@@ -15,7 +15,7 @@ type Props = {
 export default function HomeTableView({ templates }: Props) {
   return (
     <div className="space-y-6">
-      <H2 className="font-normal">Templates for Consult</H2>
+      <H2>Templates for Consult</H2>
 
       <div className="space-y-2">
         <div className="flex flex-col md:flex-row md:justify-between items-start gap-2">
