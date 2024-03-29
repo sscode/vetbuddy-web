@@ -1,0 +1,7 @@
+.audio-player::-webkit-media-controls-panel {
+  background-color: hsl(var(--light-blue));
+}
+
+audio::-webkit-media-controls-play-button {
+  color: hsl(var(--primary-blue)); /* Change play button color here */
+}

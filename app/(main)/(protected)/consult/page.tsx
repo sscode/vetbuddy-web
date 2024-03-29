@@ -1,6 +1,4 @@
 import ConsultForm from "./_components/form";
-import { H2 } from "@/app/Components/Typography";
-import Image from "next/image";
 import { createClient } from "@/app/Lib/supabase/server";
 
 export default async function Consult() {
@@ -11,8 +9,7 @@ export default async function Consult() {
     .select("*");
 
   return (
-    <div className="flex flex-col max-w-4xl w-full mx-auto">
-      <H2>Consult</H2>
+    <div className="flex flex-col w-full flex-grow">
       <ConsultForm templates={templates || []} />
     </div>
   );

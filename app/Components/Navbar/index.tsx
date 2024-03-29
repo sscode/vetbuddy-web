@@ -12,16 +12,16 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "../ui/navigation-menu";
-import { authenticatedNavItems } from "@/app/Constants";
 
 import { Button } from "../ui/button";
+import Image from "next/image";
 import Link from "next/link";
+import NavLink from "./NavLink";
 import React from "react";
 import { Separator } from "../ui/separator";
 import { User } from "@supabase/supabase-js";
+import { authenticatedNavItems } from "@/app/Constants";
 import useSignOut from "@/app/Hooks/useSignOut";
-import Image from "next/image";
-import NavLink from "./NavLink";
 
 type Props = {
   user?: User | null;
@@ -41,7 +41,7 @@ export default function Navbar({ user }: Props) {
               height={60}
             />
             <Image
-              className="pt-2"
+              className="pt-2 h-auto"
               alt="VetBuddy Logo"
               src="/vetbuddy-logo-text.svg"
               width={140}
@@ -65,7 +65,7 @@ export default function Navbar({ user }: Props) {
             ))}
           </div> */}
 
-          <div className="flex gap-8 flex-grow justify-end items-center">
+          <div className="hidden md:flex gap-8 flex-grow justify-end items-center">
             {user ? (
               <>
                 {authenticatedNavItems.map((navItem, index) => (

@@ -1,12 +1,13 @@
-import { Button } from "../Components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
-import { createClient } from "../Lib/supabase/server";
-import { P } from "../Components/Typography";
 import { FilePlusFilled, NoTemplateIcon } from "../Components/Icons";
-import NewTemplateModal from "../Components/NewTemplateModal";
+
+import { Button } from "../Components/ui/button";
 import { HintContextProvider } from "../Hooks/HintProvider";
 import HomeTableView from "./_components/TableView";
+import Image from "next/image";
+import Link from "next/link";
+import NewTemplateModal from "../Components/NewTemplateModal";
+import { P } from "../Components/Typography";
+import { createClient } from "../Lib/supabase/server";
 
 export default async function Home({
   searchParams,
@@ -57,7 +58,7 @@ export default async function Home({
     .ilike("name", `%${searchQuery || ""}%`);
 
   return (
-    <>
+    <div className="py-12 max-w-7xl w-[calc(100%-40px)] mx-auto flex flex-col flex-grow">
       <div className="flex flex-col flex-grow">
         {templates?.length || searchQuery ? (
           <HintContextProvider>
@@ -83,6 +84,6 @@ export default async function Home({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
