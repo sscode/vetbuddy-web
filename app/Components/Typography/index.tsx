@@ -27,7 +27,7 @@ export function H2({ children, className, ...props }: HeadingProps) {
   return (
     <h2
       className={cn(
-        "scroll-m-20 pb-2 text-3xl font-bold tracking-tight first:mt-0",
+        "scroll-m-20 pb-2 text-3xl tracking-tight first:mt-0",
         className
       )}
       {...props}
@@ -40,7 +40,7 @@ export function H2({ children, className, ...props }: HeadingProps) {
 export function H3({ children, className, ...props }: HeadingProps) {
   return (
     <h3
-      className={cn("scroll-m-20 text-2xl font-bold tracking-tight", className)}
+      className={cn("scroll-m-20 text-2xl tracking-tight", className)}
       {...props}
     >
       {children}
@@ -70,5 +70,16 @@ export function P({ children, className, ...props }: PProps) {
     >
       {children}
     </p>
+  );
+}
+
+export function Span({ children, className, ...props }: PProps) {
+  return (
+    <span
+      className={cn("text-sm", className)}
+      {...props}
+    >
+      {children}
+    </span>
   );
 }

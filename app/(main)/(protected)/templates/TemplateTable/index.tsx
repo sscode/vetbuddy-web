@@ -111,7 +111,7 @@ export default function TemplateTable() {
         </Button>
       ),
       cell: ({ row }) => {
-        const date: Date = row.original.modified;
+        const date: Date = row.original.updated_at;
 
         if (!date) {
           return "-";

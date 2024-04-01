@@ -14,7 +14,7 @@ export type TemplateInput = {
 
 export type Template = {
   id: string;
-  modified: Date;
+  updated_at: Date;
 } & TemplateInput;
 
 type TemplateListStore = {
@@ -35,7 +35,7 @@ export const useTemplateListStore = create<TemplateListStore>()(
         try {
           const { data, error } = await supabase
             .from("templates")
-            .select("id, name, modified:updated_at, sections");
+            .select("id, name, updated_at, sections");
           if (error) {
             throw error;
           }
@@ -55,7 +55,7 @@ export const useTemplateListStore = create<TemplateListStore>()(
                 name: newTemplate?.name,
                 sections: newTemplate?.sections,
               })
-              .select("id, name, modified:updated_at, sections")
+              .select("id, name, updated_at, sections")
               .single();
             if (error) {
               throw error;

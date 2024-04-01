@@ -41,7 +41,7 @@ export const landingNavItems = (user: boolean) => [
 export const authenticatedNavItems = [
   {
     title: "Templates",
-    link: "/templates",
+    link: "/",
   },
   {
     title: "History",
