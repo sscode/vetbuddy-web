@@ -9,7 +9,7 @@ type Props = {
   onStop: (blobs:Blob[]) => void
 };
 
-export default function RecordButton({ disabled, onRecord, onStop }: Props) {
+export default function Recorder({ disabled, onRecord, onStop }: Props) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 

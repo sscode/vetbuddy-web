@@ -76,10 +76,89 @@ export const createConsult = async (formData: FormData) => {
       throw error;
     }
 
+    const newConsult = data[0];
+
     revalidatePath("/history");
+    revalidatePath("/consult/" + newConsult.id);
+
+    return newConsult;
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+};
+
+export const updateConsult = async (formData: FormData) => {
+  try {
+    const audioBlob = formData.get("audioBlob");
+    const rawConsult = formData.get("consult") as string;
+    const consult = JSON.parse(rawConsult);
+
+    const template = consult.template;
+
+    // Uploading Audio
+    const response = await fetch(
+      "https://vetbuddy.onrender.com/generate-upload-url"
+    );
+    const { uploadURL, key } = await response.json();
+
+    await fetch(uploadURL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "audio/wav",
+      },
+      body: audioBlob,
+    });
+
+    const fileAccessURL = `https://vetbuddy.s3.us-west-2.amazonaws.com/${key}`;
+
+    // Transcripting Audio
+    const deepgramRes = await fetch(
+      `https://vetbuddy.onrender.com/deepgram?url=${encodeURIComponent(
+        fileAccessURL
+      )}`
+    );
+    const deepgramdata = await deepgramRes.json();
+    const transcript =
+      deepgramdata.results.channels[0].alternatives[0].transcript;
+
+    const textForAPI = formatConsultTextForAPI(template.sections);
+    console.log("textForAPI", textForAPI);
+
+    // Generating AI response
+    const openaiRes = await fetch("https://vetbuddy.onrender.com/openai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ transcript, textForAPI }),
+    });
+    const openaiData = await openaiRes.json();
+    console.log("data:", openaiData.text);
+
+    // Updating Database
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("consults")
+      .update({
+        name: consult.name,
+        audio_url: fileAccessURL,
+        transcript,
+        content: openaiData.text,
+        created_at: new Date(),
+      })
+      .eq("id", consult.id)
+      .select("*");
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath("/history");
+    revalidatePath("/consult/" + consult.id);
 
     return data[0];
   } catch (error) {
-    console.error("Error: ", error)
+    console.error("Error: ", error);
   }
 };

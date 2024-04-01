@@ -12,7 +12,7 @@ export default async function Consult() {
   const { data: templates } = await supabase.from("templates").select("*");
 
   return (
-    <div className="flex flex-col w-full flex-grow">
+    <>
       {templates?.length ? (
         <ConsultForm templates={templates || []} />
       ) : (
@@ -34,6 +34,6 @@ export default async function Consult() {
           </Link>
         </div>
       )}
-    </div>
+    </>
   );
 }

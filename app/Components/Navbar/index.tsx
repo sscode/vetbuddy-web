@@ -22,19 +22,19 @@ import { Separator } from "../ui/separator";
 import { User } from "@supabase/supabase-js";
 import { authenticatedNavItems } from "@/app/Constants";
 import { signOut } from "@/app/Actions/signout";
+import { useUser } from "@/app/Hooks/UserProvider";
 
-type Props = {
-  user?: User | null;
-};
+type Props = {};
 
-export default function Navbar({ user }: Props) {
+export default function Navbar({}: Props) {
+  const user = useUser();
   const signOutUser = () => {
-    signOut()
+    signOut();
   };
   return (
     <header className="w-full">
       <NavigationMenu className="w-full mx-auto max-w-none py-2 bg-white md:h-24">
-        <NavigationMenuList className="w-[calc(100vw-2vw-80px)] justify-between">
+        <NavigationMenuList className="w-[calc(100vw-2vw-20px)] md:w-[calc(100vw-2vw-80px)] justify-between">
           <div className="flex gap-2 items-center">
             <Image
               alt="VetBuddy Logo"
@@ -67,11 +67,11 @@ export default function Navbar({ user }: Props) {
             ))}
           </div> */}
 
-          <div className="hidden md:flex gap-8 flex-grow justify-end items-center">
+          <div className="flex gap-8 flex-grow justify-end items-center">
             {user ? (
               <>
                 {authenticatedNavItems.map((navItem, index) => (
-                  <NavigationMenuItem key={index}>
+                  <NavigationMenuItem key={index} className="hidden md:block">
                     <NavLink href={navItem.link}>{navItem.title}</NavLink>
                   </NavigationMenuItem>
                 ))}
