@@ -43,18 +43,18 @@ export const MOCK_TEMPLATES: Template[] = [
   {
     id: "asda",
     name: "Consult 1",
-    modified: new Date(),
+    updated_at: new Date(),
     sections: []
   },
   {
     id: "asdasfda",
     name: "Example",
-    modified: new Date(),
+    updated_at: new Date(),
     sections: []  },
   {
     id: "asdasdasdfhfdasfda",
     name: "Example 2",
-    modified: new Date(),
+    updated_at: new Date(),
     sections: []
   },
 ];
