@@ -13,14 +13,13 @@ import {
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
 import { Input } from "@/app/Components/ui/input";
-import { LoaderIcon } from "lucide-react";
 import { P } from "@/app/Components/Typography";
-import { cn } from "@/app/Lib/utils";
+import { cn, makeFormData } from "@/app/Lib/utils";
 import { errorMessages } from "@/app/Constants/messages";
-import { supabase } from "@/app/Lib/supabase/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signUp } from "@/app/Actions/signUp";
 
 const formSchema = z.object({
   email: z.string().min(1, "Please enter an email address."),
@@ -45,15 +44,9 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     setMessage("");
-    const { email, password } = values;
+    const formData = makeFormData(values)
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) {
-        throw error;
-      }
+      await signUp(formData)
       form.reset();
       setMessage(
         "Confirmation e-mail has been sent to your e-mail address. Please Check your email."

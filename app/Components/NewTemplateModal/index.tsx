@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/app/Components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,19 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/Components/ui/dialog";
-import { Input } from "@/app/Components/ui/input";
-import { Label } from "@/app/Components/ui/label";
-import { P, Span } from "../Typography";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useToast } from "../ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useTemplateListStore } from "@/app/store";
-import { errorMessages } from "@/app/Constants/messages";
-import { Checkbox } from "../ui/checkbox";
-import { Plus, X } from "lucide-react";
-import React, { useState } from "react";
-import { FilePlusFilled } from "../Icons";
 import {
   Form,
   FormControl,
@@ -30,7 +16,23 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
+import { P, Span } from "../Typography";
+import { Plus, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { Button } from "@/app/Components/ui/button";
+import { Checkbox } from "../ui/checkbox";
+import { FilePlusFilled } from "../Icons";
+import { Input } from "@/app/Components/ui/input";
+import { Label } from "@/app/Components/ui/label";
 import { addTemplate } from "@/app/Actions/templates";
+import { errorMessages } from "@/app/Constants/messages";
+import { useTemplateListStore } from "@/app/store";
+import { useToast } from "../ui/use-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
   children: React.ReactNode;
@@ -68,8 +70,19 @@ export default function NewTemplateModal({ children }: Props) {
     name: "sections",
   });
 
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const addNew = searchParams.get("action") === "add-template";
+
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(addNew || false);
+
+  useEffect(() => {
+    if(addNew && !open){
+      router.replace("/")
+    }
+  }, [open])
 
   const onSubmit = async (values: any) => {
     // Remove async if not doing async operations or await inside
@@ -80,16 +93,16 @@ export default function NewTemplateModal({ children }: Props) {
     formData.append("name", name);
     formData.append("sections", JSON.stringify(sections));
     try {
-      setLoading(true)
+      setLoading(true);
       await addTemplate(formData);
       toast({ title: "Successfully added new Template" });
       reset();
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
       toast({ title: errorMessages.unexpected, variant: "destructive" });
       console.error("Failed to add template:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 

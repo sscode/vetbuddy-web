@@ -12,13 +12,12 @@ import {
 
 import { Button } from "@/app/Components/ui/button";
 import { Input } from "@/app/Components/ui/input";
-import { LoaderIcon } from "lucide-react";
-import { supabase } from "@/app/Lib/supabase/client";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/app/Components/ui/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { login } from "../../../Actions/login";
+import { makeFormData } from "@/app/Lib/utils";
 
 const formSchema = z.object({
   email: z.string().min(1, "Please enter your email."),
@@ -28,8 +27,7 @@ const formSchema = z.object({
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function LoginForm({ className, ...props }: UserAuthFormProps) {
-  const { toast } = useToast(); // Destructuring to get toast function
-  const { refresh } = useRouter();
+  const { toast } = useToast();
 
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -43,17 +41,10 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
 
   const handleLogin = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    const { email, password } = values;
+    const formData = makeFormData(values)
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        throw error;
-      }
+      await login(formData);
       form.reset();
-      refresh();
     } catch (error) {
       toast({ title: "An unexpected error has occured, please try again" });
       console.error("Error", error);
