@@ -132,7 +132,9 @@ export default function TemplateTable({ templates }: TProps) {
           return "-";
         }
         const formatted = dayjs(date).format("ddd, MMM D, YYYY h:mm A");
-        return <P className="text-neutral-800 whitespace-nowrap">{formatted}</P>;
+        return (
+          <P className="text-neutral-800 whitespace-nowrap">{formatted}</P>
+        );
       },
     },
     {
@@ -145,7 +147,10 @@ export default function TemplateTable({ templates }: TProps) {
             <div className="flex gap-2 w-full justify-end">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="w-fit px-0 text-neutral-400">
+                  <Button
+                    variant="ghost"
+                    className="w-fit px-0 text-neutral-400"
+                  >
                     <EllipsisVertical />
                   </Button>
                 </DropdownMenuTrigger>
@@ -187,59 +192,61 @@ export default function TemplateTable({ templates }: TProps) {
   });
 
   return (
-    <Table className="bg-white border border-neutral-100">
-      <TableHeader className="sticky top-0 border-b border-neutral-100">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow
-            key={headerGroup.id}
-            className="border-neutral-100 bg-neutral-100 hover:bg-neutral-100"
-          >
-            {headerGroup.headers.map((header) => {
-              return (
-                <TableHead
-                  key={header.id}
-                  {...{
-                    ...(header.id === "actions" && {
-                      className: "w-0",
-                    }),
-                  }}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
+    <div className="w-full overflow-x-scroll sm:overflow-x-visible">
+      <Table className="bg-white border border-neutral-100">
+        <TableHeader className="sticky top-0 border-b border-neutral-100">
+          {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() && "selected"}
-              className="border-neutral-100"
+              key={headerGroup.id}
+              className="border-neutral-100 bg-neutral-100 hover:bg-neutral-100"
             >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="py-2 px-4">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    {...{
+                      ...(header.id === "actions" && {
+                        className: "w-0",
+                      }),
+                    }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className="h-24 text-center">
-              No results.
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className="border-neutral-100"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id} className="py-2 px-4">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
@@ -247,5 +254,5 @@ function SortIcon({ sorted }: { sorted: false | SortDirection }) {
   if (sorted === "asc") {
     return <ChevronDown className="ml-2 h-4 w-4" />;
   }
-  return <ChevronUp className={cn(!sorted && "opacity-0","ml-2 h-4 w-4")} />;
+  return <ChevronUp className={cn(!sorted && "opacity-0", "ml-2 h-4 w-4")} />;
 }

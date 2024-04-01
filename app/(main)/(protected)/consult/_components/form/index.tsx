@@ -1,7 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/app/Components/ui/avatar";
-import { File, Files } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -9,7 +7,7 @@ import {
   FormField,
   FormItem,
 } from "@/app/Components/ui/form";
-import { H2, H4, P, Span } from "@/app/Components/Typography";
+import { H2, P } from "@/app/Components/Typography";
 import React, { useState } from "react";
 import {
   Select,
@@ -19,16 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/Components/ui/select";
-import { cn, copyToClipboard } from "@/app/Lib/utils";
 
-import AudioPlayer from "./AudioPlayer";
-import { Button } from "@/app/Components/ui/button";
-import { FourPointedStar } from "@/app/Components/Icons/FourPointedStar";
+import ConsultResult from "../ConsultResult";
+import { File } from "lucide-react";
 import Image from "next/image";
-import RecordButton from "./RecordButton";
+import Recorder from "@/app/Components/Recorder";
 import { Template } from "@/app/store";
+import { cn } from "@/app/Lib/utils";
 import { createConsult } from "@/app/Actions/consult";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useToast } from "@/app/Components/ui/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,6 +55,8 @@ export default function ConsultForm({ templates }: Props) {
 
   const { toast } = useToast();
 
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [consultText, setConsultText] = useState<string>("");
 
@@ -82,76 +82,15 @@ export default function ConsultForm({ templates }: Props) {
       const newConsult = await createConsult(formData);
       setConsultText(newConsult.content);
       toast({ title: "Successfully Added Consultation" });
+      router.push(`/consult/${newConsult.id}`);
     } catch (error) {
       toast({
         title: "Error in Transcription. Try recording again.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
-
-  const Result = () => (
-    <>
-      <div>
-        <div className="flex items-center gap-2 w-fit mb-2">
-          <Avatar>
-            <AvatarFallback>NA</AvatarFallback>
-          </Avatar>
-          <Span className="text-gray-600">You shared a recording</Span>
-        </div>
-        <AudioPlayer src={audioURL} />
-        {!isLoading && consultText && (
-          <div className="flex flex-col flex-grow gap-2 my-4">
-            <div className="flex items-center justify-between">
-              <H4>Suggestion</H4>
-              <Button
-                onClick={() => copyToClipboard(consultText)}
-                size="sm"
-                variant="outline"
-                className="text-gray-500"
-              >
-                <Files className="h-4" /> Copy
-              </Button>
-            </div>
-            <textarea
-              disabled
-              className={cn(
-                "w-full p-2 border rounded-md text-sm flex-grow h-[240px] resize-none",
-                "disabled:text-black disabled:cursor-text disabled:bg-background"
-              )}
-              defaultValue={consultText}
-            />
-          </div>
-        )}
-      </div>
-      {isLoading && (
-        <div className="flex-grow flex flex-col justify-center items-center">
-          <div className="flex items-center justify-center relative size-[82px]">
-            <Image
-              alt="Loading"
-              src="/custom-loading.png"
-              width={60}
-              height={60}
-              className="animate-spin"
-            />
-            <Image
-              alt="Loading"
-              src="/custom-loading-large.png"
-              width={82}
-              height={82}
-              className="absolute animate-reverse-spin top-0 left-0 size-[82px]"
-            />
-            <FourPointedStar className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-          </div>
-          <Span className="text-base font-medium text-neutral-500">
-            Consult is being Generated
-          </Span>
-        </div>
-      )}
-    </>
-  );
 
   return (
     <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row flex-grow">
@@ -219,7 +158,7 @@ export default function ConsultForm({ templates }: Props) {
               render={({ field }) => (
                 <FormItem className="w-full mb-0">
                   <div className="flex w-full h-12 items-center border rounded-md overflow-hidden group-[nameinput]:">
-                    <div className="bg-gray-50 text-neutral-600 h-full px-4 w-1/4 min-w-fit flex items-center border-r">
+                    <div className="bg-gray-50 text-sm text-neutral-600 h-full px-4 w-1/4 min-w-fit flex items-center border-r">
                       Name
                     </div>
                     <input
@@ -249,7 +188,7 @@ export default function ConsultForm({ templates }: Props) {
           <div className="w-full h-24 mt-16"></div>
           <div className="absolute left-0 bottom-0 w-full h-24 bg-slate-50">
             <div className="absolute -top-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-              <RecordButton
+              <Recorder
                 onRecord={() => {}}
                 onStop={async (audioBlobs) => {
                   const audioBlob = new Blob(audioBlobs, { type: "audio/wav" });
@@ -263,24 +202,14 @@ export default function ConsultForm({ templates }: Props) {
           </div>
         </form>
       </Form>
-      {/* <Drawer>
-        <DrawerTrigger className="flex md:hidden w-full gap-2 p-4 justify-center bg-light-blue text-primary-blue border-t">
-          <ChevronUp /> <span>Show Generations</span>
-        </DrawerTrigger>
-        <DrawerContent>
-          <Result />
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer> */}
       {audioURL && (
         <>
           <div className="flex flex-col flex-grow min-h-full bg-white md:px-8 px-4 pt-12">
-            <Result />
+            <ConsultResult
+              audioURL={audioURL}
+              consultText={consultText}
+              isLoading={isLoading}
+            />
           </div>
         </>
       )}

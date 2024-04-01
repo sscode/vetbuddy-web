@@ -9,17 +9,17 @@ import {
   FormItem,
   FormMessage,
 } from "@/app/Components/ui/form";
+import { cn, makeFormData } from "@/app/Lib/utils";
 
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
 import { Input } from "@/app/Components/ui/input";
 import { P } from "@/app/Components/Typography";
-import { cn, makeFormData } from "@/app/Lib/utils";
 import { errorMessages } from "@/app/Constants/messages";
+import { signUp } from "@/app/Actions/signUp";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp } from "@/app/Actions/signUp";
 
 const formSchema = z.object({
   email: z.string().min(1, "Please enter an email address."),

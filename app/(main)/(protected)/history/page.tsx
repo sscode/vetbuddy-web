@@ -1,10 +1,9 @@
-import { H2, H3, P } from "@/app/Components/Typography";
+import { H3, P } from "@/app/Components/Typography";
 
 import { Button } from "@/app/Components/ui/button";
 import { Card } from "@/app/Components/ui/card";
 import { Eye } from "lucide-react";
 import Link from "next/link";
-import SearchHistory from "./_components/SearchHistory";
 import { Template } from "@/app/store";
 import { createClient } from "@/app/Lib/supabase/server";
 import dayjs from "dayjs";
@@ -92,11 +91,7 @@ export default async function HistoryPage({
   };
 
   return (
-    <div className="py-12 max-w-7xl w-[calc(100%-40px)] mx-auto">
-      <div className="mb-12">
-        <H2 className="mb-4">Consult History</H2>
-        <SearchHistory />
-      </div>
+    <>
       {groupRecordsByDate(consults)?.length ? (
         <div className="flex flex-col gap-10 my-4">
           {groupRecordsByDate(consults).map((groupRecord, index) => (
@@ -108,21 +103,32 @@ export default async function HistoryPage({
                     key={index}
                     className="bg-slate-50 p-4 flex justify-between items-center rounded-none text-neutral-500"
                   >
-                    <P className="indent-8 text-sm font-medium w-60 overflow-hidden">
+                    <P className="md:indent-8 text-sm font-medium w-60 overflow-hidden">
                       {record?.template && record.template.name}
                     </P>
 
-                    <P className="text-sm text-neutral-500 font-medium w-48">
-                      {dayjs(record.created_at).format("ddd, MMM D, YYYY H:mm")}
-                    </P>
+                    <div className="flex gap-4 items-center w-fit">
+                      <P className="whitespace-nowrap text-sm text-neutral-500 font-medium md:w-48">
+                        <span className="hidden md:block">
+                          {dayjs(record.created_at).format(
+                            "ddd, MMM D, YYYY H:mm"
+                          )}
+                        </span>
+                        <span className="block md:hidden">
+                          {dayjs(record.created_at).format("d/M/YY[-]H:mm")}
+                        </span>
+                      </P>
 
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-neutral-500 space-x-2"
-                    >
-                      <Eye /> <span>View</span>
-                    </Button>
+                      <Link href={`/consult/${record.id}`}>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-neutral-500 space-x-2"
+                        >
+                          <Eye className="hidden md:block" /> <span>View</span>
+                        </Button>
+                      </Link>
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -137,6 +143,6 @@ export default async function HistoryPage({
           </Link>
         </div>
       )}
-    </div>
+    </>
   );
 }
