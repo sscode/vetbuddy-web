@@ -43,7 +43,7 @@ export default function Navbar({ user }: Props) {
             <Image
               className="pt-2 h-auto"
               alt="VetBuddy Logo"
-              src="/vetbuddy-logo-text.svg"
+              src="/vetbuddy-logo-title.svg"
               width={140}
               height={0}
             />
