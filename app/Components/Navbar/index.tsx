@@ -21,14 +21,16 @@ import React from "react";
 import { Separator } from "../ui/separator";
 import { User } from "@supabase/supabase-js";
 import { authenticatedNavItems } from "@/app/Constants";
-import useSignOut from "@/app/Hooks/useSignOut";
+import { signOut } from "@/app/Actions/signout";
 
 type Props = {
   user?: User | null;
 };
 
 export default function Navbar({ user }: Props) {
-  const signOut = useSignOut();
+  const signOutUser = () => {
+    signOut()
+  };
   return (
     <header className="w-full">
       <NavigationMenu className="w-full mx-auto max-w-none py-2 bg-white md:h-24">
@@ -85,7 +87,7 @@ export default function Navbar({ user }: Props) {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem disabled>{user.email}</DropdownMenuItem>
                       <Separator />
-                      <DropdownMenuItem onClick={signOut}>
+                      <DropdownMenuItem onClick={signOutUser}>
                         Sign Out
                       </DropdownMenuItem>
                     </DropdownMenuContent>
