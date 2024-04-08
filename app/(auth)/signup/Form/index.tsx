@@ -120,7 +120,9 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
                   </FormItem>
                 )}
               />
-              <Button type="submit" loading={isLoading}>
+              <Button 
+              className="bg-primary-blue text-white"
+              type="submit" loading={isLoading}>
                 Sign up
               </Button>
             </div>

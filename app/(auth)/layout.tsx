@@ -18,9 +18,9 @@ export default async function ProtectedLayout({
     redirect("/");
   }
   return (
-    <main className="flex-grow px-4 py-8">
+    <main className="flex-grow px-4 py-8 mt-24">
       <Link href="/">
-        <H1 className="p-4 mx-auto w-fit text-black">VetBuddy.AI</H1>
+        <H1 className="p-4 mx-auto w-fit text-primary-blue">VetBuddy.AI</H1>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 max-w-[480px]">
         {children}

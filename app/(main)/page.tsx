@@ -27,7 +27,7 @@ export default async function Home({
       <>
         <div className="flex flex-col flex-grow">
           <div className="text-center">
-            <h1 className="text-5xl font-bold mb-1">
+            <h1 className="text-5xl font-bold mb-1 mt-36">
               More consults, less admin
             </h1>
             <p className="text-l mb-12">
